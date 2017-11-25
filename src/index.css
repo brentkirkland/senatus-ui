@@ -1,5 +1,25 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1 {
+  font-size: 1.3em;
+}
+
+h2 {
+  font-size: 1.2em
+}
+
+h3 {
+  font-size: 1.1em
+}
+
+h4 {
+  font-size: 1em
+}
+
+p {
+  font-size: 1em;
 }

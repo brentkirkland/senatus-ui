@@ -3,21 +3,24 @@
 }
 
 .App-header {
-  padding: 20px;
-  border-bottom-color: #ddd;
+  padding: 10px;
+  border-bottom-color: #0061ff;
   border-bottom-width: 1px;
   border-bottom-style: solid;
+  color: white;
+  background-color: #0061ff;
 }
 
 .App-title {
-  font-size: 1.5em;
-  font-family: monospace;
+  margin: 0;
+  font-size: 1.15em;
+  font-weight: 400;
 }
 
 .App-intro {
-  font-size: large;
+  font-size: normal;
 }
 
 .App-body {
-  padding: 20px;
+  padding: 10px;
 }
