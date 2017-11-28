@@ -4,11 +4,9 @@
 
 .App-header {
   padding: 10px;
-  border-bottom-color: #0061ff;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
   color: white;
-  background-color: #0061ff;
+  background-color: #182535;
+  /*background-color: #0061ff;*/
 }
 
 .App-title {
@@ -23,4 +21,73 @@
 
 .App-body {
   padding: 10px;
+}
+
+.App-window {
+  background-color: #f2f5f9;
+  color: #182535;
+  padding: 10px;
+  width: 100%;
+  max-width: 800px;
+  margin: 10px;
+  border-radius: 2px;
+}
+
+.App-container {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+
+}
+
+.App-space {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-bold {
+  display: flex;
+  font-weight: 400;
+}
+
+.container-header {
+  font-family: monospace;
+  font-size: 1.25em;
+  color: #aaa;
+  font-weight: 400;
+  border-bottom-style: dotted;
+  border-bottom-width: 1px;
+  border-bottom-color: black;
+}
+
+.container-header-span {
+  margin-bottom: 10px;
+}
+
+.window-header {
+  font-size: 1.2em;
+  display: flex;
+  flex-direction: row;
+}
+
+.window-header-selected {
+  font-weight: 700;
+  padding: 10px;
+}
+
+.window-header-bar {
+  padding-top: 10px;
+  font-weight: 300;
+}
+
+.window-header-deselected {
+  font-weight: 400;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.window-header-deselected:hover {
+  text-decoration: underline;
 }

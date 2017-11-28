@@ -10,8 +10,12 @@ class App extends Component {
     this.state = {
       web3: null,
       message: '',
-      signedMessage: 'No message yet'
+      signedMessage: null,
+      jsonMessage: JSON.stringify(this.getPlaceholder()),
+      method: null
     }
+
+    this.handleRadio = this.handleRadio.bind(this)
   }
 
   componentDidMount () {
@@ -64,19 +68,23 @@ class App extends Component {
         data: msgParams,
         sig: result.result
       })
-      console.log(from, recovered, 'motherfucker')
       if (recovered.toUpperCase() === from.toUpperCase()) {
         // window.alert('Recovered signer: ' + from)
-        setSignedMessage(result.result)
+        setSignedMessage(result.result, 'metamask')
       } else {
         window.alert('Failed to verify signer, got: ' + result)
       }
     })
   }
 
-  setSignedMessage (result) {
+  setSignedMessage (result, method) {
     this.setState({
-      'signedMessage': result
+      'signedMessage': result,
+      'method': method,
+      'jsonMessage': {
+        signedMessage: result,
+        method: method
+      }
     })
   }
 
@@ -86,9 +94,118 @@ class App extends Component {
     })
   }
 
+  handleRadio (e) {
+    console.log(e.target.value)
+    if (e.target.value === 'metamask') {
+      console.log('do nothing')
+    }
+  }
+
+  getPlaceholder () {
+    const placeholder = {
+      uuid: 1,
+      message: 'Should we use Senatus as a team?',
+      quorum: 2,
+      signers: ['Robert', 'Fei', 'Paolo'],
+      creator: 'Brent',
+      signatures: [],
+      timestamp: Date.now(),
+      complete: false
+    }
+    return placeholder
+  }
+
+  renderSignProposal () {
+    // replaced by component
+    return (
+      <div className='App-container'>
+        <h4>Create a proposal that requires group concensus.</h4>
+        <h4>Message</h4>
+        <div className='App-body'>
+          <textarea
+            placeholder='Enter a json message' />
+        </div>
+        <h4>Sign</h4>
+        <div className='App-body'>
+          <textarea
+            placeholder='Enter a json message' />
+        </div>
+        <h2>Majority Number</h2>
+        <div className='App-body'>
+          <textarea
+            placeholder='Enter a json message' />
+        </div>
+        <h2>FAQ</h2>
+        <div className='App-body'>
+          <ul>
+            <li>Enter hash</li>
+            <li><i>Send hash to Senatus</i></li>
+            <li>Select signers from whitelist</li>
+            <li>Select consensus majority number</li>
+            <li>Submit</li>
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
+  renderCreateProposal () {
+    // replaced by component
+    return (
+      <div className='App-container'>
+        <h2>Create Proposal</h2>
+        <div className='App-body'>
+          <h3>Message</h3>
+          <textarea
+            placeholder='Enter a json message' />
+        </div>
+        <div className='App-body'>
+          <h3>Steps</h3>
+          <ul>
+            <li>Enter message</li>
+            <li>Select signers from whitelist</li>
+            <li>Select consensus majority number</li>
+            <li>Sign</li>
+            <li>Submit</li>
+          </ul>
+        </div>
+      </div>
+    )
+  }
+
+  switchProcess (process = 'sign') {
+    if (process === 'sign') {
+      return this.renderSignProposal()
+    } else {
+      return this.renderCreateProposal()
+    }
+  }
+
+  showStyleGuide () {
+    const boo = true
+    // dev switch
+    if (boo) {
+      return (
+        <div className='App-space'>
+          <div className='App-window'>
+            <div className='App-container'>
+              <h2>Style Guide</h2>
+              <div className='App-body'>
+                <h1>This is an h1 header</h1>
+                <h2>This is an h2 header</h2>
+                <h3>This is an h3 header</h3>
+                <h4>This is an h4 header</h4>
+                <span>This is a span</span>
+                <p>This is a paragraph</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
   render () {
-    console.log(this.state)
-    console.log(window.web3.currentProvider)
     return (
       <div className='App'>
         <header className='App-header'>
@@ -96,7 +213,7 @@ class App extends Component {
         </header>
         <div className='App-body'>
           <p className='App-intro'>
-            Welcome to the beginning of Senatus.
+            Welcome to the beginning of Senatus. This is currently a sketch pad and does not represent the completed product.
           </p>
           <h3>TODO</h3>
           <ul>
@@ -106,43 +223,90 @@ class App extends Component {
             <li>Get list</li>
             <li>Get sign</li>
             <li>Get validate</li>
+            <li>Config file</li>
           </ul>
         </div>
-        <div className='App-body'>
-          <h4>Enter a message:</h4>
-          <textarea
-            onChange={this.handleTextAreaChange.bind(this)}
-            value={this.state.message}
-            playholder='Enter a unique message here' />
+        <div className='App-space'>
+          <div className='App-window'>
+            <div className='window-header'>
+              <div className='window-header-selected'>Create Proposal</div>
+              <div className='window-header-bar'>|</div>
+              <div className='window-header-deselected'>Sign Proposal</div>
+            </div>
+            {this.switchProcess()}
+          </div>
+          <div className='App-window'>
+            <h1>Mechanisms</h1>
+            <p>Here you will find the working parts that will make up the proccesses. You will not see this in the future.</p>
+            <div className='App-container'>
+              <h2>Sign Message</h2>
+              <div className='App-body'>
+                <h3>Message</h3>
+                <textarea
+                  onChange={this.handleTextAreaChange.bind(this)}
+                  value={this.state.message}
+                  placeholder='Enter a unique message here' />
+              </div>
+              <div className='App-body'>
+                <h3>Method</h3>
+                <form>
+                  <div className='radio'>
+                    <label>
+                      <input type='radio' value='metamask'
+                        onChange={this.handleRadio}
+                        checked={this.state.method === 'metamask'} />
+                      MetaMask
+                    </label>
+                  </div>
+                  <div className='radio'>
+                    <label>
+                      <input type='radio' value='ledger'
+                        onChange={this.handleRadio}
+                        checked={this.state.method === 'ledger'} />
+                      Ledger Wallet
+                    </label>
+                  </div>
+                  <div className='radio'>
+                    <label>
+                      <input type='radio' value='trezor'
+                        onChange={this.handleRadio}
+                        checked={this.state.method === 'trezor'} />
+                      Trezor
+                    </label>
+                  </div>
+                  <div className='button'>
+                    <input type='submit' value='Sign Message' />
+                  </div>
+                </form>
+              </div>
+              <div className='App-body'>
+                <h3>Response</h3>
+                <span>{JSON.stringify({signedMessage: this.state.signedMessage, method: this.state.method})}</span>
+              </div>
+              <div className='App-body'>
+                <h3>Does it work?:</h3>
+                <textarea
+                  placeholder='Enter a json message' />
+              </div>
+            </div>
+            <div className='App-container'>
+              <h2>Verify Message</h2>
+              <div className='App-body'>
+                <h3>Message</h3>
+                <textarea
+                  placeholder='Enter a json message' />
+              </div>
+            </div>
+            <div className='App-container'>
+              <h2>Users</h2>
+              <div className='App-body'>
+                <h3>Whitelist</h3>
+                <p>This is a list of people on the whitelist</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className='App-body'>
-          <h4>Pick your poison:</h4>
-          <label className='radio'
-            onClick={this.web3Sign.bind(this)}>
-            <input type='radio' value='metamask' />
-            <span>Metamask</span>
-          </label>
-          <label className='radio'>
-            <input type='radio' value='ledger' />
-            <span>Ledger Wallet</span>
-          </label>
-          <label className='radio'>
-            <input type='radio' value='trezor' />
-            <span>Trezor</span>
-          </label>
-        </div>
-        <div className='App-body'>
-          <h4>Your Signed Message:</h4>
-          <span>{this.state.signedMessage}</span>
-        </div>
-        <div className='App-body'>
-          <h1>This is an h1 header</h1>
-          <h2>This is an h2 header</h2>
-          <h3>This is an h3 header</h3>
-          <h4>This is an h4 header</h4>
-          <span>This is a span</span>
-          <p>This is a paragraph</p>
-        </div>
+        {this.showStyleGuide()}
       </div>
     )
   }
