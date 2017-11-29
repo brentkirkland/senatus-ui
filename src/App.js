@@ -2,22 +2,59 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import TextArea from 'react-textarea-autosize'
-import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 import Window from './components/Window'
 import CreateProposal from './components/CreateProposal'
 import SignProposal from './components/SignProposal'
+import NotFound from './components/NotFound'
 import './App.css'
 
 class App extends Component {
   constructor () {
     super()
 
+    const tabs = [
+      {
+        title: 'Create Proposal',
+        subtitle: 'Create a proposal that requires group concensus.',
+        component: <CreateProposal />
+      },
+      {
+        title: 'Sign Proposal',
+        subtitle: 'Review and sign the following proposal to reach group concensus.',
+        component: <SignProposal />
+      },
+      {
+        title: 'Page Not Found',
+        subtitle: 'Sorry about that.',
+        component: <NotFound type='url' />
+      }
+    ]
+    const CreatePage = (props) => {
+      return (
+        <Window tabs={[tabs[0]]} {...props} />
+      )
+    }
+    const SignPage = (props) => {
+      return (
+        <Window tabs={[tabs[1]]} {...props} />
+      )
+    }
+    const NotFoundPage = (props) => {
+      return (
+        <Window tabs={[tabs[2]]} {...props} />
+      )
+    }
+
     this.state = {
       web3: null,
       message: '',
       signedMessage: null,
       jsonMessage: JSON.stringify(this.getPlaceholder()),
-      method: null
+      method: null,
+      CreatePage: CreatePage,
+      SignPage: SignPage,
+      NotFoundPage: NotFoundPage
     }
 
     this.handleRadio = this.handleRadio.bind(this)
@@ -359,33 +396,14 @@ class App extends Component {
   // }
 
   render () {
-    const tabs = [
-      {
-        title: 'Create Proposal',
-        subtitle: 'Create a proposal that requires group concensus.',
-        component: <CreateProposal />
-      },
-      {
-        title: 'Sign Proposal',
-        subtitle: 'Review and sign the following proposal to reach group concensus.',
-        component: <SignProposal />
-      }
-    ]
-    const CreatePage = (props) => {
-      return (
-        <Window tabs={[tabs[0]]} {...props} />
-      )
-    }
-    const SignPage = (props) => {
-      return (
-        <Window tabs={[tabs[1]]} {...props} />
-      )
-    }
+    const { SignPage, CreatePage, NotFoundPage } = this.state
     return (
       <Router>
         <div className='App'>
           <header className='App-header'>
-            <h1 className='App-title'>Senatus</h1>
+            <Link className='App-title-link' to='/'>
+              <h1 className='App-title'>Senatus</h1>
+            </Link>
             <div className='App-search'>
               <input className='App-search-input'
                 placeholder='Enter a hash to view proposal' />
@@ -393,8 +411,11 @@ class App extends Component {
             </div>
           </header>
           <div className='App-space'>
-            <Route exact path='/' render={SignPage} />
-            <Route path='/a/*' render={CreatePage} />
+            <Switch>
+              <Route exact path='/' render={CreatePage} />
+              <Route path='/a/*' render={SignPage} />
+              <Route component={NotFoundPage} />
+            </Switch>
           </div>
         </div>
       </Router>

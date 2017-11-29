@@ -13,8 +13,9 @@ class Window extends Component {
   }
 
   handleHeaderClick (e) {
-    const { id } = e.target
+    const id = parseInt(e.target.id, 10)
     if (id !== this.state.headerIndex) {
+      console.log('header click')
       this.setState({
         headerIndex: parseInt(id, 10)
       })
@@ -22,7 +23,6 @@ class Window extends Component {
   }
 
   renderHeaderTabs () {
-    console.log(this.props)
     const { tabs } = this.props
     const { headerIndex } = this.state
     const objects = []

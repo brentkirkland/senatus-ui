@@ -22,6 +22,28 @@
   font-weight: 700;
 }
 
+.App-title-link {
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+
+.App-title-link:visited {
+  color: white;
+  text-decoration: none;
+}
+
+.App-title-link:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.App-title-link:active {
+  color: white;
+  text-decoration: none;
+}
+
 .App-intro {
   font-size: normal;
 }
