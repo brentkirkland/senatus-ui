@@ -192,7 +192,7 @@ class App extends Component {
     const tabs = [
       {
         title: 'Create Proposal',
-        subtitle: '',
+        subtitle: 'Create a proposal that requires group concensus.',
         component: <CreateProposal />
       }
     ]
@@ -208,7 +208,7 @@ class App extends Component {
     const tabs = [
       {
         title: 'Sign Proposal',
-        subtitle: '',
+        subtitle: 'Review and sign the following proposal to reach group concensus.',
         component: <SignProposal />
       }
     ]

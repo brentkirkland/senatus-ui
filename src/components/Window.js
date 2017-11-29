@@ -51,7 +51,7 @@ class Window extends Component {
     const { headerIndex } = this.state
     const { tabs } = this.props
     return (
-      <p>{tabs[headerIndex].subTitle}</p>
+      <p>{tabs[headerIndex].subtitle}</p>
     )
   }
 
@@ -59,7 +59,6 @@ class Window extends Component {
     return (
       <div className='window-header'>
         {this.renderHeaderTabs()}
-        {this.renderHeaderSubtitle()}
       </div>
     )
   }
@@ -74,6 +73,7 @@ class Window extends Component {
     return (
       <div className='App-window'>
         {this.renderHeader()}
+        {this.renderHeaderSubtitle()}
         {this.renderContainer()}
       </div>
     )
