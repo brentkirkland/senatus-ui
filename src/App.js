@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
+import TextArea from 'react-textarea-autosize'
+import Window from './components/Window'
+import CreateProposal from './components/CreateProposal'
+import SignProposal from './components/SignProposal'
 import './App.css'
 
 class App extends Component {
@@ -120,22 +124,28 @@ class App extends Component {
     return (
       <div className='App-container'>
         <h4>Create a proposal that requires group concensus.</h4>
-        <h4>Message</h4>
         <div className='App-body'>
-          <textarea
-            placeholder='Enter a json message' />
+          <TextArea
+            placeholder='Enter message' />
         </div>
-        <h4>Sign</h4>
         <div className='App-body'>
-          <textarea
-            placeholder='Enter a json message' />
+          <TextArea
+            placeholder='Add signers' />
         </div>
-        <h2>Majority Number</h2>
         <div className='App-body'>
-          <textarea
-            placeholder='Enter a json message' />
+          <TextArea
+            placeholder='Number of Signatures Required' />
         </div>
-        <h2>FAQ</h2>
+        <div className='App-body'>
+          <TextArea
+            placeholder='Number of Signatures Required' />
+        </div>
+        <div className='App-body'>
+          <input
+            value='Create Proposal'
+            type='Submit' />
+        </div>
+        <h2>Steps</h2>
         <div className='App-body'>
           <ul>
             <li>Enter hash</li>
@@ -174,11 +184,35 @@ class App extends Component {
   }
 
   switchProcess (process = 'sign') {
-    if (process === 'sign') {
-      return this.renderSignProposal()
-    } else {
-      return this.renderCreateProposal()
-    }
+    // if (process === 'sign') {
+    //   return this.renderSignProposal()
+    // } else {
+    //   return this.renderCreateProposal()
+    // }
+    const tabs = [
+      {
+        title: 'Create Proposal',
+        subtitle: '',
+        component: <CreateProposal />
+      }
+    ]
+    return <Window tabs={tabs} />
+  }
+
+  renderSign (process = 'sign') {
+    // if (process === 'sign') {
+    //   return this.renderSignProposal()
+    // } else {
+    //   return this.renderCreateProposal()
+    // }
+    const tabs = [
+      {
+        title: 'Sign Proposal',
+        subtitle: '',
+        component: <SignProposal />
+      }
+    ]
+    return <Window tabs={tabs} />
   }
 
   showStyleGuide () {
@@ -210,31 +244,28 @@ class App extends Component {
       <div className='App'>
         <header className='App-header'>
           <h1 className='App-title'>Senatus</h1>
-        </header>
-        <div className='App-body'>
-          <p className='App-intro'>
-            Welcome to the beginning of Senatus. This is currently a sketch pad and does not represent the completed product.
-          </p>
-          <h3>TODO</h3>
-          <ul>
-            <li>Setup Redux Sagas</li>
-            <li>Setup app structure</li>
-            <li>Get Whitelist</li>
-            <li>Get list</li>
-            <li>Get sign</li>
-            <li>Get validate</li>
-            <li>Config file</li>
-          </ul>
-        </div>
-        <div className='App-space'>
-          <div className='App-window'>
-            <div className='window-header'>
-              <div className='window-header-selected'>Create Proposal</div>
-              <div className='window-header-bar'>|</div>
-              <div className='window-header-deselected'>Sign Proposal</div>
-            </div>
-            {this.switchProcess()}
+          <div className='App-search'>
+            <input className='App-search-input'
+              placeholder='Enter a hash to view proposal' />
+            <input type='submit' value='Go' className='App-search-button' />
           </div>
+        </header>
+        <br />
+        <div className='App-space'>
+          {this.switchProcess()}
+          {this.renderSign()}
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
           <div className='App-window'>
             <h1>Mechanisms</h1>
             <p>Here you will find the working parts that will make up the proccesses. You will not see this in the future.</p>
@@ -307,6 +338,21 @@ class App extends Component {
           </div>
         </div>
         {this.showStyleGuide()}
+        <div className='App-body'>
+          <p className='App-intro'>
+            Welcome to the beginning of Senatus. This is currently a sketch pad and does not represent the completed product.
+          </p>
+          <h3>TODO</h3>
+          <ul>
+            <li>Setup Redux Sagas</li>
+            <li>Setup app structure</li>
+            <li>Get Whitelist</li>
+            <li>Get list</li>
+            <li>Get sign</li>
+            <li>Get validate</li>
+            <li>Config file</li>
+          </ul>
+        </div>
       </div>
     )
   }
