@@ -8,7 +8,7 @@ class SignProposal extends Component {
       <div className='App-container'>
         <h4>Hash 1231a</h4>
         <label>Message</label>
-        <p>This is the message I want you to see. This is the message I want you to see. This is the message I want you to see. This is the message I want you to see. This is the message I want you to see</p>
+        <p>This is the message I want you to see. \ nThis is the message I want you to see. This is the message I want you to see. This is the message I want you to see. This is the message I want you to see</p>
         <label>Whitelist</label>
         <p>Brent, Paolo, Yaya</p>
         <label>Quorum</label>

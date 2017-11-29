@@ -22,6 +22,7 @@ class Window extends Component {
   }
 
   renderHeaderTabs () {
+    console.log(this.props)
     const { tabs } = this.props
     const { headerIndex } = this.state
     const objects = []
