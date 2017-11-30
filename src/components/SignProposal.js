@@ -31,7 +31,7 @@ class SignProposal extends Component {
           <p>2 out of 3 sigs</p>
           <label>Timestamp</label>
           <p>Some date</p>
-          <label>Signature</label>
+          <label>Signing Process</label>
           <p>SIGNATURE COMPONENT</p>
           <br />
           <input

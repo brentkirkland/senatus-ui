@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
+import Signature from './Signature'
 import './App.css'
 
 class CreateProposal extends Component {
@@ -45,8 +46,8 @@ class CreateProposal extends Component {
           <label>Quorum</label>
           <input onChange={this.handleQuorum}
             type='number' placeholder='Signatures Required' />
-          <label>Signature</label>
-          <p>SIGNATURE COMPONENT</p>
+          <label>Signing Process</label>
+          <Signature />
           <input
             onClick={this.handleSubmit}
             defaultValue='Create Proposal'
