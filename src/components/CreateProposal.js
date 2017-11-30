@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
-import '../App.css'
+import './App.css'
 
 class CreateProposal extends Component {
   constructor (props) {

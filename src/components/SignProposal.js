@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
-import '../App.css'
+import './App.css'
 
 class SignProposal extends Component {
   constructor () {
@@ -15,7 +15,6 @@ class SignProposal extends Component {
   }
 
   render () {
-    console.log(this.props)
     const { uuid } = this.props
     const { params } = this.props.match
     return (
