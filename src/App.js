@@ -7,54 +7,19 @@ import Window from './components/Window'
 import CreateProposal from './components/CreateProposal'
 import SignProposal from './components/SignProposal'
 import NotFound from './components/NotFound'
+import Search from './components/Search'
 import './App.css'
 
 class App extends Component {
   constructor () {
     super()
 
-    const tabs = [
-      {
-        title: 'Create Proposal',
-        subtitle: 'Create a proposal that requires group concensus.',
-        component: <CreateProposal />
-      },
-      {
-        title: 'Sign Proposal',
-        subtitle: 'Review and sign the following proposal to reach group concensus.',
-        component: <SignProposal />
-      },
-      {
-        title: 'Page Not Found',
-        subtitle: 'Sorry about that.',
-        component: <NotFound type='url' />
-      }
-    ]
-    const CreatePage = (props) => {
-      return (
-        <Window tabs={[tabs[0]]} {...props} />
-      )
-    }
-    const SignPage = (props) => {
-      return (
-        <Window tabs={[tabs[1]]} {...props} />
-      )
-    }
-    const NotFoundPage = (props) => {
-      return (
-        <Window tabs={[tabs[2]]} {...props} />
-      )
-    }
-
     this.state = {
       web3: null,
       message: '',
       signedMessage: null,
       jsonMessage: JSON.stringify(this.getPlaceholder()),
-      method: null,
-      CreatePage: CreatePage,
-      SignPage: SignPage,
-      NotFoundPage: NotFoundPage
+      method: null
     }
 
     this.handleRadio = this.handleRadio.bind(this)
@@ -277,144 +242,67 @@ class App extends Component {
     }
   }
 
-  // render () {
-  //   return (
-  //     <div className='App'>
-  //       <header className='App-header'>
-  //         <h1 className='App-title'>Senatus</h1>
-  //         <div className='App-search'>
-  //           <input className='App-search-input'
-  //             placeholder='Enter a hash to view proposal' />
-  //           <input type='submit' value='Go' className='App-search-button' />
-  //         </div>
-  //       </header>
-  //       <br />
-  //       <div className='App-space'>
-  //         {this.switchProcess()}
-  //         {this.renderSign()}
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <br />
-  //         <div className='App-window'>
-  //           <h1>Mechanisms</h1>
-  //           <p>Here you will find the working parts that will make up the proccesses. You will not see this in the future.</p>
-  //           <div className='App-container'>
-  //             <h2>Sign Message</h2>
-  //             <div className='App-body'>
-  //               <h3>Message</h3>
-  //               <textarea
-  //                 onChange={this.handleTextAreaChange.bind(this)}
-  //                 value={this.state.message}
-  //                 placeholder='Enter a unique message here' />
-  //             </div>
-  //             <div className='App-body'>
-  //               <h3>Method</h3>
-  //               <form>
-  //                 <div className='radio'>
-  //                   <label>
-  //                     <input type='radio' value='metamask'
-  //                       onChange={this.handleRadio}
-  //                       checked={this.state.method === 'metamask'} />
-  //                     MetaMask
-  //                   </label>
-  //                 </div>
-  //                 <div className='radio'>
-  //                   <label>
-  //                     <input type='radio' value='ledger'
-  //                       onChange={this.handleRadio}
-  //                       checked={this.state.method === 'ledger'} />
-  //                     Ledger Wallet
-  //                   </label>
-  //                 </div>
-  //                 <div className='radio'>
-  //                   <label>
-  //                     <input type='radio' value='trezor'
-  //                       onChange={this.handleRadio}
-  //                       checked={this.state.method === 'trezor'} />
-  //                     Trezor
-  //                   </label>
-  //                 </div>
-  //                 <div className='button'>
-  //                   <input type='submit' value='Sign Message' />
-  //                 </div>
-  //               </form>
-  //             </div>
-  //             <div className='App-body'>
-  //               <h3>Response</h3>
-  //               <span>{JSON.stringify({signedMessage: this.state.signedMessage, method: this.state.method})}</span>
-  //             </div>
-  //             <div className='App-body'>
-  //               <h3>Does it work?:</h3>
-  //               <textarea
-  //                 placeholder='Enter a json message' />
-  //             </div>
-  //           </div>
-  //           <div className='App-container'>
-  //             <h2>Verify Message</h2>
-  //             <div className='App-body'>
-  //               <h3>Message</h3>
-  //               <textarea
-  //                 placeholder='Enter a json message' />
-  //             </div>
-  //           </div>
-  //           <div className='App-container'>
-  //             <h2>Users</h2>
-  //             <div className='App-body'>
-  //               <h3>Whitelist</h3>
-  //               <p>This is a list of people on the whitelist</p>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       {this.showStyleGuide()}
-  //       <div className='App-body'>
-  //         <p className='App-intro'>
-  //           Welcome to the beginning of Senatus. This is currently a sketch pad and does not represent the completed product.
-  //         </p>
-  //         <h3>TODO</h3>
-  //         <ul>
-  //           <li>Setup Redux Sagas</li>
-  //           <li>Setup app structure</li>
-  //           <li>Get Whitelist</li>
-  //           <li>Get list</li>
-  //           <li>Get sign</li>
-  //           <li>Get validate</li>
-  //           <li>Config file</li>
-  //         </ul>
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  renderRouteDetails () {
+    const sign = [
+      {
+        title: 'Proposal ' + Date.now(),
+        component: <SignProposal />
+      }
+    ]
+    const create = [
+      {
+        title: 'Create Proposal',
+        component: <SignProposal />
+      }
+    ]
+    const notFound = [
+      {
+        title: 'Page Not Found',
+        component: <NotFound type='url' />
+      }
+    ]
+    const CreatePage = (props) => {
+      return (
+        <Window tabs={create} {...props} />
+      )
+    }
+    const SignPage = (props) => {
+      return (
+        <Window tabs={sign} {...props} />
+      )
+    }
+    const NotFoundPage = (props) => {
+      return (
+        <Window tabs={notFound} {...props} />
+      )
+    }
+    const data = {
+      CreatePage,
+      SignPage,
+      NotFoundPage
+    }
+    return data
+  }
 
   render () {
-    const { SignPage, CreatePage, NotFoundPage } = this.state
     return (
       <Router>
         <div className='App'>
           <header className='App-header'>
-            <Link className='App-title-link' to='/'>
-              <h1 className='App-title'>Senatus</h1>
-            </Link>
-            <div className='App-search'>
-              <input className='App-search-input'
-                placeholder='Enter a hash to view proposal' />
-              <input type='submit' value='Go' className='App-search-button' />
+            <div className='App-header-container'>
+              <Link className='App-title-link' to='/'>
+                <h1 className='App-title'>Senatus</h1>
+              </Link>
+              <Route component={Search} />
             </div>
           </header>
           <div className='App-space'>
+            <br />
+            <br />
             <Switch>
-              <Route exact path='/' render={CreatePage} />
-              <Route path='/a/*' render={SignPage} />
-              <Route component={NotFoundPage} />
+              <Route exact path='/' component={CreateProposal} />
+              <Route path='/proposal/*' component={SignProposal} />
+              <Route component={NotFound} />
             </Switch>
           </div>
         </div>

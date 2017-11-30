@@ -22,6 +22,12 @@ class Window extends Component {
     }
   }
 
+  handleComponentSwitch (id) {
+    this.setState({
+      headerIndex: parseInt(id, 10)
+    })
+  }
+
   renderHeaderTabs () {
     const { tabs } = this.props
     const { headerIndex } = this.state
@@ -75,6 +81,7 @@ class Window extends Component {
       <div className='App-window'>
         {this.renderHeader()}
         {this.renderHeaderSubtitle()}
+        <br />
         {this.renderContainer()}
       </div>
     )

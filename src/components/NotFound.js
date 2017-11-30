@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-// import TextArea from 'react-textarea-autosize'
 import '../App.css'
 
 class NotFound extends Component {
@@ -19,7 +18,7 @@ class NotFound extends Component {
     }
     return (
       <div className='App-container'>
-        <p>Seems like an unkown issue happened...</p>
+        <h1>Crap. That didn't work.</h1>
       </div>
     )
   }

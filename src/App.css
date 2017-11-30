@@ -11,9 +11,18 @@
   background-color: #292929;
   flex-direction: row;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   /*background-color: #0061ff;*/
+}
+
+.App-header-container {
+  max-width: 800px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  flex: 1;
 }
 
 .App-title {
@@ -110,7 +119,7 @@
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #0061ff;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .window-header-selected {
@@ -139,7 +148,7 @@
   color: white;
   border-width: 1px;
   border-color: #222;
-  width: 400px;
+  max-width: 400px;
 }
 
 .App-search-button {
