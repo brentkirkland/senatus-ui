@@ -46,12 +46,15 @@ class CreateProposal extends Component {
           <label>Quorum</label>
           <input onChange={this.handleQuorum}
             type='number' placeholder='Signatures Required' />
+        </div>
+        <ContainerHeader titles={['Sign to Confirm']} />
+        <div className='App-container'>
           <label>Signing Process</label>
           <Signature />
           <input
             onClick={this.handleSubmit}
-            defaultValue='Create Proposal'
-            type='Submit' />
+            type='submit'
+            defaultValue='Sign Proposal' />
         </div>
       </div>
     )

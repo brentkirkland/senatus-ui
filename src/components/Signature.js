@@ -22,25 +22,25 @@ class Signature extends Component {
   render () {
     const { button } = this.state
     return (
-      <div className='App-container'>
-        <form>
-          <label>
+      <div className='App-container-signature'>
+        <form className='signature-form'>
+          <label className='signature-label'>
             <input type='radio' value='metamask'
+              className='signature-radio'
               checked={(button === 'metamask')}
-              onChange={this.handleRadio} />
-                MetaMask
+              onChange={this.handleRadio} /> MetaMask
           </label>
-          <label>
+          <label className='signature-label'>
             <input type='radio' value='ledger'
+              className='signature-radio'
               checked={(button === 'ledger')}
-              onChange={this.handleRadio} />
-            Ledger Wallet
+              onChange={this.handleRadio} /> Ledger Wallet
           </label>
-          <label>
+          <label className='signature-label'>
             <input type='radio' value='trezor'
+              className='signature-radio'
               checked={(button === 'trezor')}
-              onChange={this.handleRadio} />
-            Trezor
+              onChange={this.handleRadio} /> Trezor
           </label>
         </form>
       </div>

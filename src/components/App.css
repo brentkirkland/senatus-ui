@@ -77,14 +77,17 @@
 .App-container {
   color: black;
   background-color: #fff;
-  /*padding: 20px;
-  border-radius: 2px;
-  margin-bottom: 10px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #ddd;*/
   display: flex;
   flex-direction: column;
+  margin-bottom: 30px;
+}
+
+.App-container-signature {
+  color: black;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0px;
 }
 
 .App-space {
@@ -188,4 +191,25 @@ input {
   font-size: 1.1em;
   padding: 10px;
   border-radius: 2px;
+}
+
+form {
+
+}
+
+.signature-form {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.signature-label {
+  font-weight: 300;
+  font-family: monospace;
+  font-size: 1.1em;
+}
+
+.signature-radio {
+  margin: 0;
+  margin-top: 10px;
 }

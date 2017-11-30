@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-// import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
+import Signature from './Signature'
+
 import './App.css'
 
 class SignProposal extends Component {
@@ -31,9 +32,11 @@ class SignProposal extends Component {
           <p>2 out of 3 sigs</p>
           <label>Timestamp</label>
           <p>Some date</p>
+        </div>
+        <ContainerHeader titles={['Sign to Confirm']} />
+        <div className='App-container'>
           <label>Signing Process</label>
-          <p>SIGNATURE COMPONENT</p>
-          <br />
+          <Signature />
           <input
             onClick={this.handleSubmit}
             type='submit'
