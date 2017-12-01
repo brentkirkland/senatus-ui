@@ -125,6 +125,27 @@
   margin-bottom: 20px;
 }
 
+.window-header-error {
+  font-size: 1.3em;
+  display: flex;
+  flex-direction: row;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: red;
+  margin-bottom: 20px;
+}
+
+.window-header-success {
+  font-size: 1.3em;
+  display: flex;
+  flex-direction: row;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #39c63c;
+  margin-bottom: 20px;
+}
+
+
 .window-header-selected {
   font-weight: 700;
   padding-bottom: 10px;
