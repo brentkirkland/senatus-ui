@@ -47,7 +47,7 @@ class Signature extends Component {
     if (!message) {
       error = 'Needs a valid message. '
     }
-    if (!whitelist) {
+    if (!whitelist || whitelist.length === 0) {
       error += 'Needs a valid whitelist. '
     }
     if (!quorum) {
@@ -55,6 +55,9 @@ class Signature extends Component {
     }
     if (!button) {
       error += 'Needs a signing process. '
+    }
+    if ((quorum / whitelist.length) < 0.5) {
+      error += 'A majority will not be reached with such quorum.'
     }
     if (error.length > 0) {
       this.setState({

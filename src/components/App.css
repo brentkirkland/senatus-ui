@@ -237,6 +237,8 @@ form {
   display: flex;
   flex-direction: column;
   padding: 10px;
+  padding-right: 0px;
+  margin-bottom: 10px;
 }
 
 .signature-label {
@@ -245,7 +247,38 @@ form {
   font-size: 1.1em;
 }
 
+.signature-label-check {
+  font-weight: 300;
+  font-family: monospace;
+  font-size: 1.1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    margin-top: 10px;
+}
+
+
 .signature-radio {
   margin: 0;
   margin-top: 10px;
+}
+
+.signature-checked {
+  margin: 0;
+}
+
+.span-name, .span-email, .span-address {
+  padding-left: 10px;
+}
+
+.span-name {
+  flex: 0.75;
+}
+
+.span-email, .span-address {
+  flex: 1;
+}
+
+.span-address {
+  text-align: right;
 }
