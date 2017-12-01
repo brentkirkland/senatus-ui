@@ -17,6 +17,8 @@ class Signature extends Component {
     this.setState({
       button: value
     })
+    // move to redux
+    this.props.complete(value)
   }
 
   render () {
