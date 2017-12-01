@@ -20,7 +20,6 @@ class CreateProposal extends Component {
       quorum: 12
     }
 
-    this.handleSubmit = this.handleSubmit.bind(this)
     this.handleMessage = this.handleMessage.bind(this)
     this.handleWhitelist = this.handleWhitelist.bind(this)
     this.handleQuorum = this.handleQuorum.bind(this)
@@ -51,10 +50,9 @@ class CreateProposal extends Component {
       whitelist,
       quorum
     }
-    const msg = ethUtil.bufferToHex(new Buffer(JSON.stringify(data), 'utf8'))
+    const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
     const signMsg = this.signMsg
     web3.eth.getAccounts(function (err, accounts) {
-      console.log('i like to get accounts')
       if (err) console.error('Uh oh')
       if (!accounts) {
         console.error('no accounts')
@@ -90,17 +88,12 @@ class CreateProposal extends Component {
   }
 
   setSignedMessage (result, method, from) {
-    console.log(result, method, 'BOOOOOYAAAA')
     this.setState({
       signedMessage: result,
       method: method,
       pubKey: from,
       signed: true
     })
-  }
-
-  handleSubmit (e) {
-    console.log('sumbit')
   }
 
   handleMessage (e) {
@@ -120,7 +113,7 @@ class CreateProposal extends Component {
   handleQuorum (e) {
     const { value } = e.target
     this.setState({
-      message: parseInt(value, 10)
+      quorum: parseInt(value, 10)
     })
   }
 
@@ -154,7 +147,7 @@ class CreateProposal extends Component {
   }
 
   complete (value) {
-    console.log('value')
+    console.log('Clicked!')
     // at the time only assume metamask
   }
 
@@ -177,9 +170,8 @@ class CreateProposal extends Component {
         </div>
         <ContainerHeader titles={['Sign to Confirm']} />
         <div className='App-container'>
-          <label>Signing Process</label>
-          <p>Buttons are absent atm. Have metamask installed and unlocked.</p>
-          {/* <Signature complete={this.complete} /> */}
+          <label>Signing Process (Only metamask works!)</label>
+          <Signature complete={this.complete} />
           <input
             onClick={this.web3Sign}
             type='submit'
