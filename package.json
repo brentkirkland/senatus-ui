@@ -5,6 +5,8 @@
   "dependencies": {
     "eth-sig-util": "^1.4.0",
     "ethereumjs-util": "^5.1.2",
+    "grenache-nodejs-http": "^0.7.1",
+    "grenache-nodejs-link": "^0.7.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "^4.2.2",

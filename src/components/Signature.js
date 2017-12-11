@@ -41,14 +41,14 @@ class Signature extends Component {
   }
 
   handleSubmit () {
-    const { message, whitelist, quorum } = this.props.payload
+    const { message, whitelisted, quorum } = this.props.payload
     const { button } = this.state
     let error = ''
     if (!message) {
       error = 'Needs a valid message. '
     }
-    if (!whitelist || whitelist.length === 0) {
-      error += 'Needs a valid whitelist. '
+    if (!whitelisted || whitelisted.length === 0) {
+      error += 'Needs a valid whitelisted. '
     }
     if (!quorum) {
       error += 'Needs a valid quorum. '
@@ -56,7 +56,7 @@ class Signature extends Component {
     if (!button) {
       error += 'Needs a signing process. '
     }
-    if ((quorum / whitelist.length) < 0.5) {
+    if ((quorum / whitelisted.length) <= 0.5) {
       error += 'A majority will not be reached with such quorum.'
     }
     if (error.length > 0) {
@@ -71,11 +71,11 @@ class Signature extends Component {
 
   web3Sign () {
     const { web3 } = this.state
-    const { message, whitelist, quorum } = this.props.payload
+    const { message, whitelisted, quorum } = this.props.payload
     const data = {
-      message,
-      whitelist,
-      quorum
+      msg: message,
+      sigs: whitelisted,
+      sigsRequired: quorum
     }
     const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
     const signMsg = this.signMsg
@@ -115,7 +115,7 @@ class Signature extends Component {
   }
 
   setSignedMessage (result, method, from) {
-    const { message, whitelist, quorum } = this.props.payload
+    const { message, whitelisted, quorum } = this.props.payload
     this.setState({
       signedMessage: result,
       method: method,
@@ -123,7 +123,7 @@ class Signature extends Component {
       signed: true,
       error: null,
       finalMessage: message,
-      finalWhitelist: whitelist,
+      finalwhitelisted: whitelisted,
       finalQuorum: quorum
     })
   }
@@ -169,18 +169,20 @@ class Signature extends Component {
       const { signedMessage,
         pubKey,
         finalMessage,
-        finalWhitelist,
+        finalwhitelisted,
         finalQuorum } = this.state
 
-      const data = {
-        message: finalMessage,
-        whitelist: finalWhitelist,
-        quorum: finalQuorum,
-        signedMessage,
-        pubKey,
-        timestamp: Date.now(),
-        uuid: 1
-      }
+      const data = [
+        {
+          msg: finalMessage,
+          signers: finalwhitelisted,
+          sigsRequired: finalQuorum
+        },
+        {
+          signer: pubKey, // lookup username
+          signedMsg: signedMessage
+        }
+      ]
       return (
         <div className='App-container'>
           <label>Verified Payload</label>
