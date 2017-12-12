@@ -14,11 +14,11 @@ class SignProposal extends Component {
       peer,
       payload: null
     }
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount () {
     this.getData()
+    this.getWhitelist()
   }
 
   getPeer () {
@@ -32,6 +32,27 @@ class SignProposal extends Component {
     return peer
   }
 
+  getWhitelist () {
+    const { peer } = this.state
+    const fxQuery = {
+      action: 'getWhitelist',
+      args: []
+    }
+    peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
+      if (err) {
+        window.alert(err)
+      }
+      const whitelistMap = new Map()
+      data.forEach(function (user) {
+        whitelistMap.set(user.username, user)
+      })
+      this.setState({
+        whitelist: data,
+        whitelistMap
+      })
+    })
+  }
+
   getData () {
     const { peer } = this.state
     const { params } = this.props.match
@@ -43,55 +64,56 @@ class SignProposal extends Component {
       if (err) {
         window.alert(err)
       }
+      const payload = JSON.parse(data.v)
+      const sigsMap = new Map()
+      payload.sigs.forEach(function (sig) {
+        sigsMap.set(sig.signer, sig)
+      })
       this.setState({
-        payload: data
+        payload,
+        sigsMap
       })
     })
   }
 
-  handleSubmit (e) {
-    console.log('sumbit')
-  }
-
   handleSigners (signers) {
-    return (
-      <div className='App-container-signature'>
-        <div className='signature-form'>
-          {signers.map((signer, index) => {
-            return (
-              <label key={'person' + index} className='signature-label-check'>
-                <span className='span-name'>{'person.username'}</span>
-                <span className='span-email'>{'person.email'}</span>
-                <span className='span-address'>{'person.pubkey'}</span>
-              </label>
-            )
-          })}
+    const { whitelistMap, sigsMap } = this.state
+    if (whitelistMap && sigsMap) {
+      return (
+        <div className='App-container-signature'>
+          <div className='signature-form'>
+            {signers.map((signer, index) => {
+              const user = whitelistMap.get(signer)
+              const signed = sigsMap.has(user.username)
+              if (signed) {
+                return (
+                  <label key={'person' + index} className='signature-label-check'>
+                    <span className='span-name'><b>{user.username}</b></span>
+                    <span className='span-email'><b>{user.email}</b></span>
+                    <span className='span-address'><b>{user.pubkey}</b></span>
+                  </label>
+                )
+              }
+              return (
+                <label key={'person' + index} className='signature-label-check'>
+                  <span className='span-name'>{user.username}</span>
+                  <span className='span-email'>{user.email}</span>
+                  <span className='span-address'>{user.pubkey}</span>
+                </label>
+              )
+            })}
+          </div>
         </div>
-      </div>
-    )
-  }
-
-  handleSignatures (signatures) {
-    return (
-      <div className='App-container-signature'>
-        <div className='signature-form'>
-          {signatures.map((signature, index) => {
-            return (
-              <label key={'person' + index} className='signature-label-check'>
-                <span className='span-name'>{'person.username'}</span>
-                <span className='span-email'>{'person.email'}</span>
-                <span className='span-address'>{'person.pubkey'}</span>
-              </label>
-            )
-          })}
-        </div>
-      </div>
-    )
+      )
+    }
   }
 
   handleSignaturesRequired (sigs, sigsRequired) {
     const amountLeft = sigsRequired - sigs.length
-    return <p>{amountLeft + ' more. ' + sigsRequired + ' total. '}</p>
+    if (amountLeft > 0) {
+      return <p className={'p-mono'}>{amountLeft + ' more. ' + sigsRequired + ' total. '}</p>
+    }
+    return <p className={'p-mono'}>{'None. Process Complete.'}</p>
   }
 
   render () {
@@ -99,23 +121,18 @@ class SignProposal extends Component {
     const { params } = this.props.match
     const { payload } = this.state
     const fetching = 'Fetching...'
-    const details = (payload) ? JSON.parse(payload.v) : null
     return (
       <div className='App-window'>
         <ContainerHeader titles={['Proposal', uuid]} />
         <div className='App-container'>
           <label>Hash</label>
-          <p>{params[0]}</p>
+          <p className={'p-mono'}>{params[0]}</p>
           <label>Message</label>
-          <p>{(details) ? details.msg : fetching}</p>
+          <p className={'p-mono'}>{(payload) ? payload.msg : fetching}</p>
           <label>Whitelist</label>
-          {(details) ? this.handleSigners(details.signers) : <p>{fetching}</p>}
-          <label>Signatures</label>
-          {(details) ? this.handleSignatures(details.sigs) : <p>{fetching}</p>}
+          {(payload) ? this.handleSigners(payload.signers) : <p>{fetching}</p>}
           <label>Signatures Required</label>
-          {(details) ? this.handleSignaturesRequired(details.sigs, details.sigsRequired) : <p>{fetching}</p>}
-          <label>UUID</label>
-          <p>{(details) ? details.uuid : fetching}</p>
+          {(payload) ? this.handleSignaturesRequired(payload.sigs, payload.sigsRequired) : <p>{fetching}</p>}
         </div>
         <Signature />
       </div>

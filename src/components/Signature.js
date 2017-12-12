@@ -74,13 +74,13 @@ class Signature extends Component {
     const { message, whitelisted, quorum } = this.props.payload
     const data = {
       msg: message,
-      sigs: whitelisted,
+      signers: whitelisted,
       sigsRequired: quorum
     }
     const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
     const signMsg = this.signMsg
     web3.eth.getAccounts(function (err, accounts) {
-      if (err) console.error('Uh oh')
+      if (err) console.error('Could not get account')
       if (!accounts) {
         console.error('no accounts')
         return

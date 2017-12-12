@@ -267,7 +267,7 @@ form {
   margin: 0;
 }
 
-.span-name, .span-email, .span-address {
+.span-name, .span-email, .span-address, .span-pubkey {
   padding-left: 10px;
 }
 
@@ -275,10 +275,19 @@ form {
   flex: 0.75;
 }
 
-.span-email, .span-address {
+.span-email, .span-address, .span-pubkey {
   flex: 1;
+}
+
+.span-pubkey {
+  font-size: .5em;
 }
 
 .span-address {
   text-align: right;
+}
+
+.p-mono {
+  font-family: monospace;
+  font-size: 1.1em;
 }
