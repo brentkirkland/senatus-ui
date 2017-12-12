@@ -152,9 +152,18 @@ class CreateProposal extends Component {
   }
 
   render () {
-    const { message, quorum, whitelisted } = this.state
+    const {
+      message,
+      quorum,
+      whitelisted,
+      whitelist
+     } = this.state
     const payload = {
-      message, whitelisted, quorum, step: 'create'
+      message,
+      whitelisted,
+      whitelist,
+      quorum,
+      step: 'create'
     }
     return (
       <div className='App-window'>

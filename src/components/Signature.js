@@ -116,12 +116,14 @@ class Signature extends Component {
 
   setSignedMessage (result, method, from) {
     const { message, whitelisted, quorum } = this.props.payload
+    const username = this.findUser(from)
     this.setState({
       signedMessage: result,
       method: method,
       pubKey: from,
       signed: true,
-      error: null,
+      error: (username) ? null : 'You are not whitelisted :(',
+      username,
       finalMessage: message,
       finalwhitelisted: whitelisted,
       finalQuorum: quorum
@@ -133,6 +135,17 @@ class Signature extends Component {
     this.setState({
       button: value
     })
+  }
+
+  findUser (pubKey) {
+    // TODO: maybe not O(n) lookup
+    const { whitelist } = this.props.payload
+    for (let i = 0; i < whitelist.length; i++) {
+      if (whitelist[i].pubkey.toUpperCase() === pubKey.toString().toUpperCase()) {
+        return whitelist[i].username
+      }
+    }
+    return null
   }
 
   renderRadios () {
@@ -166,11 +179,13 @@ class Signature extends Component {
   renderPayload () {
     const { signed } = this.state
     if (signed) {
-      const { signedMessage,
-        pubKey,
+      const {
+        signedMessage,
         finalMessage,
         finalwhitelisted,
-        finalQuorum } = this.state
+        finalQuorum,
+        username
+      } = this.state
 
       const data = [
         {
@@ -179,7 +194,7 @@ class Signature extends Component {
           sigsRequired: finalQuorum
         },
         {
-          signer: pubKey, // lookup username
+          signer: username, // lookup username
           signedMsg: signedMessage
         }
       ]
@@ -214,8 +229,8 @@ class Signature extends Component {
   }
 
   handlePayload () {
-    const { signed } = this.state
-    if (signed) {
+    const { signed, error } = this.state
+    if (signed && !error) {
       return (
         <div>
           <ContainerHeader titles={['Payload']} success />
