@@ -10,38 +10,6 @@ class CreateProposal extends Component {
   constructor (props) {
     super(props)
 
-    // const fakeWhitelist = [
-    //   {
-    //     name: 'Brent',
-    //     email: 'brent@bitfinex.com',
-    //     address: '0x0123123123123123123122'
-    //   },
-    //   {
-    //     name: 'Fei',
-    //     email: 'fei@bitfinex.com',
-    //     address: '0x0123104198264123123123'
-    //   },
-    //   {
-    //     name: 'Robert',
-    //     email: 'robert@bitfinex.com',
-    //     address: '0x0123104192352547346845'
-    //   },
-    //   {
-    //     name: 'Paolo',
-    //     email: 'paolo@bitfinex.com',
-    //     address: '0x0123104191234234634745'
-    //   },
-    //   {
-    //     name: 'Will',
-    //     email: 'will@bitfinex.com',
-    //     address: '0x0223102128212354236345'
-    //   },
-    //   {
-    //     name: 'Davide',
-    //     email: 'davide@bitfinex.com',
-    //     address: '0x0123104198212354236345'
-    //   }
-    // ]
     const peer = this.getPeer()
 
     this.state = {

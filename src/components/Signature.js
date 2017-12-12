@@ -232,11 +232,13 @@ class Signature extends Component {
         <div className='App-container'>
           <label>Verified Payload</label>
           <TextArea className='container-textarea'
+            spellCheck={false}
             value={JSON.stringify(data, undefined, 2)} />
           <label>Shareable Hash</label>
           {(hash)
             ? (
               <TextArea className='container-textarea'
+                spellCheck={false}
                 value={hash} />
               )
             : <p>Fetching...</p>}
