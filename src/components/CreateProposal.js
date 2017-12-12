@@ -156,13 +156,15 @@ class CreateProposal extends Component {
       message,
       quorum,
       whitelisted,
-      whitelist
+      whitelist,
+      peer
      } = this.state
     const payload = {
       message,
       whitelisted,
       whitelist,
       quorum,
+      peer,
       step: 'create'
     }
     return (

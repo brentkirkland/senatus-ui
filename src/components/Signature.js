@@ -21,7 +21,7 @@ class Signature extends Component {
     this.handleRadio = this.handleRadio.bind(this)
     this.web3Sign = this.web3Sign.bind(this)
     this.signMsg = this.signMsg.bind(this)
-    this.setSignedMessage = this.setSignedMessage.bind(this)
+    this.sendPayload = this.sendPayload.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
@@ -92,7 +92,7 @@ class Signature extends Component {
   signMsg (msg, from) {
     const params = [msg, from]
     const method = 'personal_sign'
-    const setSignedMessage = this.setSignedMessage
+    const sendPayload = this.sendPayload
     this.state.web3.currentProvider.sendAsync({
       method,
       params,
@@ -107,26 +107,55 @@ class Signature extends Component {
         sig: result.result
       })
       if (recovered.toUpperCase() === from.toUpperCase()) {
-        setSignedMessage(result.result, 'metamask', from)
+        sendPayload(result.result, 'metamask', from)
       } else {
         window.alert('Failed to verify signer, got: ' + result)
       }
     })
   }
 
-  setSignedMessage (result, method, from) {
-    const { message, whitelisted, quorum } = this.props.payload
+  sendPayload (result, method, from) {
+    const {
+      message,
+      whitelisted,
+      quorum,
+      peer
+    } = this.props.payload
     const username = this.findUser(from)
+    const error = (username) ? null : 'You are not whitelisted :('
     this.setState({
       signedMessage: result,
       method: method,
       pubKey: from,
       signed: true,
-      error: (username) ? null : 'You are not whitelisted :(',
+      error,
       username,
       finalMessage: message,
       finalwhitelisted: whitelisted,
       finalQuorum: quorum
+    })
+    const args = [
+      {
+        msg: message,
+        signers: whitelisted,
+        sigsRequired: quorum
+      },
+      {
+        signer: username,
+        signedMsg: result
+      }
+    ]
+    const addSigQuery = {
+      action: 'addSig',
+      args
+    }
+    peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, res) => {
+      if (err) {
+        window.alert(err)
+      }
+      this.setState({
+        hash: res
+      })
     })
   }
 
@@ -184,7 +213,8 @@ class Signature extends Component {
         finalMessage,
         finalwhitelisted,
         finalQuorum,
-        username
+        username,
+        hash
       } = this.state
 
       const data = [
@@ -203,6 +233,13 @@ class Signature extends Component {
           <label>Verified Payload</label>
           <TextArea className='container-textarea'
             value={JSON.stringify(data, undefined, 2)} />
+          <label>Shareable Hash</label>
+          {(hash)
+            ? (
+              <TextArea className='container-textarea'
+                value={hash} />
+              )
+            : <p>Fetching...</p>}
         </div>
       )
     }
