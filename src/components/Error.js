@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import ContainerHeader from './ContainerHeader'
 import './App.css'
 
@@ -18,4 +19,12 @@ class Error extends Component {
   }
 }
 
-export default Error
+function mapStateToProps (state) {
+  const { UI = {} } = state
+  const error = UI.error || null
+  return {
+    error
+  }
+}
+
+export default connect(mapStateToProps)(Error)

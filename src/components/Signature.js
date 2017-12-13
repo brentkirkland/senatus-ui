@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
+import ledger from 'ledgerco'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
 import Error from './Error'
@@ -65,9 +66,29 @@ class Signature extends Component {
         error: error,
         signed: false
       })
+    } else if (button === 'ledger') {
+      this.ledgerSign()
     } else {
       this.web3Sign()
     }
+  }
+
+  ledgerSign () {
+    ledger.comm_node.create_async().then(function (comm) {
+      // eslint-disable-next-line new-cap
+      const eth = new ledger.eth(comm)
+      console.log('eth', eth)
+      eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
+      .then(function (result) {
+        var v = result['v'] - 27
+        v = v.toString(16)
+        if (v.length < 2) {
+          v = '0' + v
+        }
+        console.log('Signature 0x' + result['r'] + result['s'] + v)
+      })
+      .catch(function (ex) { console.log(ex) })
+    })
   }
 
   web3Sign () {
@@ -208,12 +229,6 @@ class Signature extends Component {
               className='signature-radio'
               checked={(button === 'ledger')}
               onChange={this.handleRadio} /> Ledger Wallet
-          </label>
-          <label className='signature-label'>
-            <input type='radio' value='trezor'
-              className='signature-radio'
-              checked={(button === 'trezor')}
-              onChange={this.handleRadio} /> Trezor
           </label>
         </form>
       </div>

@@ -4,6 +4,7 @@ import Signature from './Signature'
 import Error from './Error'
 import Grenache from 'grenache-nodejs-http'
 import Link from 'grenache-browser-http'
+import { connect } from 'react-redux'
 
 import './App.css'
 
@@ -14,8 +15,7 @@ class SignProposal extends Component {
     this.state = {
       peer,
       proposal: null,
-      params: null,
-      error: null
+      params: null
     }
   }
 
@@ -25,7 +25,8 @@ class SignProposal extends Component {
   }
 
   componentDidUpdate () {
-    const { params, error } = this.state
+    const { params } = this.state
+    const { error } = this.props
     if (!error && params && params !== this.props.match.params[0]) {
       this.getWhitelist()
       this.getData()
@@ -45,15 +46,14 @@ class SignProposal extends Component {
 
   getWhitelist () {
     const { peer } = this.state
+    const { createError } = this.props
     const fxQuery = {
       action: 'getWhitelist',
       args: []
     }
     peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
       if (err) {
-        this.setState({
-          error: 'Problem getting whitelist.'
-        })
+        createError('Problem getting whitelist. Make sure your grapes and worker are running.')
       } else {
         const whitelistMap = new Map()
         data.forEach(function (user) {
@@ -69,6 +69,7 @@ class SignProposal extends Component {
 
   getData () {
     const { peer } = this.state
+    const { createError } = this.props
     const { params } = this.props.match
     const getPayloadQuery = {
       action: 'getPayload',
@@ -76,9 +77,7 @@ class SignProposal extends Component {
     }
     peer.request('rest:senatus:vanilla', getPayloadQuery, { timeout: 100000 }, (err, data) => {
       if (err) {
-        this.setState({
-          error: 'Problem getting proposal.'
-        })
+        createError('Problem getting proposal. Make sure your grapes and worker are running.')
       } else {
         try {
           const proposal = JSON.parse(data.v)
@@ -140,6 +139,13 @@ class SignProposal extends Component {
     return <p className={'p-mono'}>{'None. Process Complete.'}</p>
   }
 
+  renderError () {
+    const { error } = this.props
+    if (error) {
+      return <Error />
+    }
+  }
+
   render () {
     const { uuid } = this.props
     const { params } = this.props.match
@@ -184,14 +190,39 @@ class SignProposal extends Component {
           <label>Message</label>
           <p className={'p-mono'}>{(proposal) ? proposal.msg : fetching}</p>
           <label>Whitelist</label>
-          {(proposal) ? this.handleSigners(proposal.signers) : <p>{fetching}</p>}
+          {(proposal) ? this.handleSigners(proposal.signers) : <p className={'p-mono'}>{fetching}</p>}
           <label>Signatures Required</label>
-          {(proposal) ? this.handleSignaturesRequired(proposal.sigs, proposal.sigsRequired) : <p>{fetching}</p>}
+          {(proposal) ? this.handleSignaturesRequired(proposal.sigs, proposal.sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
         <Signature payload={payload} />
+        {this.renderError()}
       </div>
     )
   }
 }
 
-export default SignProposal
+function mapStateToProps (state) {
+  const { UI = {} } = state
+  const error = UI.error || null
+  return {
+    error
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    createError: (error = 'Something went wrong.') => {
+      console.log('creating error')
+      const errorOut = {
+        type: 'UI_SET',
+        payload: {
+          section: 'error',
+          value: error
+        }
+      }
+      dispatch(errorOut)
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignProposal)

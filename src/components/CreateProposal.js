@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import TextArea from 'react-textarea-autosize'
 import Grenache from 'grenache-nodejs-http'
 import Link from 'grenache-browser-http'
+import { connect } from 'react-redux'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
+import Error from './Error'
 import './App.css'
 
 class CreateProposal extends Component {
@@ -43,17 +45,19 @@ class CreateProposal extends Component {
 
   getWhitelist () {
     const { peer } = this.state
+    const { createError } = this.props
     const fxQuery = {
       action: 'getWhitelist',
       args: []
     }
     peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
       if (err) {
-        window.alert(err)
+        createError('Problem getting whitelist. Make sure your grapes and worker are running.')
+      } else {
+        this.setState({
+          whitelist: data
+        })
       }
-      this.setState({
-        whitelist: data
-      })
     })
   }
 
@@ -95,7 +99,8 @@ class CreateProposal extends Component {
   renderWhitelistButton () {
     const { whitelist } = this.state
     const handleCheckBox = this.handleCheckBox
-    return whitelist.map((person, index) => {
+    console.log('this state', whitelist)
+    const whitelistRows = whitelist.map((person, index) => {
       return (
         <label key={'person' + index} className='signature-label-check'>
           <input type='checkbox' value={person.username}
@@ -107,6 +112,10 @@ class CreateProposal extends Component {
         </label>
       )
     })
+    if (whitelistRows.length > 0) {
+      return whitelistRows
+    }
+    return <p className={'p-mono'}>Nothing... :(</p>
   }
 
   renderWhitelist () {
@@ -117,6 +126,13 @@ class CreateProposal extends Component {
         </form>
       </div>
     )
+  }
+
+  renderError () {
+    const { error } = this.props
+    if (error) {
+      return <Error />
+    }
   }
 
   render () {
@@ -150,9 +166,34 @@ class CreateProposal extends Component {
             type='number' placeholder='Signatures Required' />
         </div>
         <Signature payload={payload} />
+        {this.renderError()}
       </div>
     )
   }
 }
 
-export default CreateProposal
+function mapStateToProps (state) {
+  const { UI = {} } = state
+  const error = UI.error || null
+  return {
+    error
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    createError: (error = 'Something went wrong.') => {
+      console.log('creating error')
+      const errorOut = {
+        type: 'UI_SET',
+        payload: {
+          section: 'error',
+          value: error
+        }
+      }
+      dispatch(errorOut)
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateProposal)
