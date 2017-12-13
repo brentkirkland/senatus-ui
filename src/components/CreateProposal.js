@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import TextArea from 'react-textarea-autosize'
-import Grenache from 'grenache-nodejs-http'
-import Link from 'grenache-browser-http'
 import { connect } from 'react-redux'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
+import { getWhitelist } from '../middleware/grenache.middleware'
 import Error from './Error'
 import './App.css'
 
@@ -12,14 +11,10 @@ class CreateProposal extends Component {
   constructor (props) {
     super(props)
 
-    const peer = this.getPeer()
-
     this.state = {
       message: null,
-      whitelist: [],
       quorum: null,
-      whitelisted: [],
-      peer: peer
+      whitelisted: []
     }
 
     this.handleMessage = this.handleMessage.bind(this)
@@ -29,36 +24,8 @@ class CreateProposal extends Component {
   }
 
   componentDidMount () {
-    this.getWhitelist()
-  }
-
-  getPeer () {
-    const Peer = Grenache.PeerRPCClient
-    const link = new Link({
-      grape: 'http://127.0.0.1:30001'
-    })
-    link.start()
-    const peer = new Peer(link, {})
-    peer.init()
-    return peer
-  }
-
-  getWhitelist () {
-    const { peer } = this.state
-    const { createError } = this.props
-    const fxQuery = {
-      action: 'getWhitelist',
-      args: []
-    }
-    peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
-      if (err) {
-        createError('Problem getting whitelist. Make sure your grapes and worker are running.')
-      } else {
-        this.setState({
-          whitelist: data
-        })
-      }
-    })
+    const { fetchWhitelist } = this.props
+    fetchWhitelist()
   }
 
   handleMessage (e) {
@@ -97,9 +64,8 @@ class CreateProposal extends Component {
   }
 
   renderWhitelistButton () {
-    const { whitelist } = this.state
+    const { whitelist } = this.props
     const handleCheckBox = this.handleCheckBox
-    console.log('this state', whitelist)
     const whitelistRows = whitelist.map((person, index) => {
       return (
         <label key={'person' + index} className='signature-label-check'>
@@ -175,15 +141,16 @@ class CreateProposal extends Component {
 function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
+  const whitelist = UI.whitelist || []
   return {
-    error
+    error,
+    whitelist
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     createError: (error = 'Something went wrong.') => {
-      console.log('creating error')
       const errorOut = {
         type: 'UI_SET',
         payload: {
@@ -192,6 +159,9 @@ function mapDispatchToProps (dispatch) {
         }
       }
       dispatch(errorOut)
+    },
+    fetchWhitelist: () => {
+      dispatch(getWhitelist())
     }
   }
 }

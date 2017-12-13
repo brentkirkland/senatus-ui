@@ -5,6 +5,7 @@ import ethUtil from 'ethereumjs-util'
 import ledger from 'ledgerco'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
+import { connect } from 'react-redux'
 import Error from './Error'
 import './App.css'
 
@@ -45,6 +46,7 @@ class Signature extends Component {
   handleSubmit () {
     const { message, whitelisted, quorum } = this.props.payload
     const { button } = this.state
+    const { createError } = this.props
     let error = ''
     if (!message) {
       error = 'Needs a valid message. '
@@ -62,10 +64,11 @@ class Signature extends Component {
       error += 'A majority will not be reached with such quorum.'
     }
     if (error.length > 0) {
-      this.setState({
-        error: error,
-        signed: false
-      })
+      console.log('error', createError)
+      createError(error)
+      // this.setState({
+      //   signed: false
+      // })
     } else if (button === 'ledger') {
       this.ledgerSign()
     } else {
@@ -325,4 +328,29 @@ class Signature extends Component {
   }
 }
 
-export default Signature
+function mapStateToProps (state) {
+  const { UI = {} } = state
+  const error = UI.error || null
+  // todo: fix this
+  return {
+    errorbaby: error
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    createError: (error = 'Something went wrong.') => {
+      console.log('creating error')
+      const errorOut = {
+        type: 'UI_SET',
+        payload: {
+          section: 'error',
+          value: error
+        }
+      }
+      dispatch(errorOut)
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signature)

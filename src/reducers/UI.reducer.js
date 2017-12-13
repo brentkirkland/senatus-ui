@@ -1,7 +1,7 @@
 import types from '../constants/UI.constants'
 
 export const getInitialState = () => ({
-  error: 'hey mam'
+  error: null
 })
 
 const UIReducer = (state = getInitialState(), { type, payload = {} }) => {
