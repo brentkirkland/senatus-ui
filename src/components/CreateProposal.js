@@ -132,8 +132,7 @@ class CreateProposal extends Component {
       whitelisted,
       whitelist,
       quorum,
-      peer,
-      step: 'create'
+      peer
     }
     return (
       <div className='App-window'>

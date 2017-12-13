@@ -4,6 +4,7 @@ import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
+import Error from './Error'
 import './App.css'
 
 class Signature extends Component {
@@ -71,11 +72,19 @@ class Signature extends Component {
 
   web3Sign () {
     const { web3 } = this.state
-    const { message, whitelisted, quorum } = this.props.payload
+    const {
+      message,
+      whitelisted,
+      quorum,
+      uuid,
+      sigs
+    } = this.props.payload
     const data = {
       msg: message,
       signers: whitelisted,
-      sigsRequired: quorum
+      sigsRequired: quorum,
+      uuid,
+      sigs
     }
     const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
     const signMsg = this.signMsg
@@ -119,6 +128,8 @@ class Signature extends Component {
       message,
       whitelisted,
       quorum,
+      uuid,
+      sigs,
       peer
     } = this.props.payload
     const username = this.findUser(from)
@@ -132,13 +143,17 @@ class Signature extends Component {
       username,
       finalMessage: message,
       finalwhitelisted: whitelisted,
-      finalQuorum: quorum
+      finalQuorum: quorum,
+      uuid,
+      sigs
     })
     const args = [
       {
         msg: message,
         signers: whitelisted,
-        sigsRequired: quorum
+        sigsRequired: quorum,
+        uuid,
+        sigs
       },
       {
         signer: username,
@@ -214,6 +229,8 @@ class Signature extends Component {
         finalwhitelisted,
         finalQuorum,
         username,
+        uuid,
+        sigs,
         hash
       } = this.state
 
@@ -221,7 +238,9 @@ class Signature extends Component {
         {
           msg: finalMessage,
           signers: finalwhitelisted,
-          sigsRequired: finalQuorum
+          sigsRequired: finalQuorum,
+          uuid,
+          sigs
         },
         {
           signer: username, // lookup username
@@ -256,14 +275,7 @@ class Signature extends Component {
   renderError () {
     const { error } = this.state
     if (error) {
-      return (
-        <div>
-          <ContainerHeader error />
-          <div className='App-container'>
-            <label>{error}</label>
-          </div>
-        </div>
-      )
+      return <Error error={error} />
     }
   }
 
