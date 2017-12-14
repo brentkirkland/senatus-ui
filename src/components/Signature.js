@@ -108,7 +108,8 @@ class Signature extends Component {
       signers,
       sigsRequired,
       uuid,
-      sigs
+      sigs,
+      createError
     } = this.props
     const data = {
       msg: message,
@@ -120,7 +121,7 @@ class Signature extends Component {
     const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
     const signMsg = this.signMsg
     web3.eth.getAccounts(function (err, accounts) {
-      if (err) console.error('Could not get account')
+      if (err) createError('Could not get account')
       if (!accounts) {
         console.error('no accounts')
         return
@@ -141,7 +142,7 @@ class Signature extends Component {
     }, function (err, result) {
       if (err) return createError('Something went wrong with your web3 provider. Possibly Metamask.')
       if (result.error) {
-        return console.error(result.error.message)
+        return createError(result.error.message)
       }
       const recovered = sigUtil.recoverPersonalSignature({
         data: msg,
@@ -186,22 +187,6 @@ class Signature extends Component {
     } else {
       createError('Looks like you are not whitelisted.')
     }
-
-    // TODO: if not username than add whitelist
-    // const error = (username) ? null : 'You are not whitelisted :('
-    // this.setState({
-    //   signedMessage: result,
-    //   method: method,
-    //   pubKey: from,
-    //   signed: true,
-    //   error,
-    //   username,
-    //   finalMessage: message,
-    //   finalwhitelisted: signers,
-    //   finalQuorum: sigsRequired,
-    //   uuid,
-    //   sigs
-    // })
   }
 
   handleRadio (e) {
@@ -209,17 +194,6 @@ class Signature extends Component {
     this.setState({
       button: value
     })
-  }
-
-  findUser (pubKey) {
-    // TODO: maybe not O(n) lookup
-    const { whitelist } = this.props.payload
-    for (let i = 0; i < whitelist.length; i++) {
-      if (whitelist[i].pubkey.toUpperCase() === pubKey.toString().toUpperCase()) {
-        return whitelist[i].username
-      }
-    }
-    return null
   }
 
   renderRadios () {
@@ -243,25 +217,6 @@ class Signature extends Component {
       </div>
     )
   }
-
-  // renderPayload () {
-  //   const { payload, hash } = this.props
-  //   console.log('p and h', payload, hash)
-  //   if (payload && hash) {
-  //     return (
-  //       <div className='App-container'>
-  //         <label>Verified Payload</label>
-  //         <TextArea className='container-textarea'
-  //           spellCheck={false}
-  //           value={JSON.stringify(payload, undefined, 2)} />
-  //         <label>Shareable Hash</label>
-  //         <TextArea className='container-textarea'
-  //           spellCheck={false}
-  //           value={hash} />
-  //       </div>
-  //     )
-  //   }
-  // }
 
   handlePayload () {
     const { payload, hash } = this.props

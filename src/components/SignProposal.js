@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
 import Error from './Error'
-import Grenache from 'grenache-nodejs-http'
-import Link from 'grenache-browser-http'
 import { getWhitelist, getProposal } from '../middleware/grenache.middleware'
 import { connect } from 'react-redux'
 
@@ -12,9 +10,7 @@ import './App.css'
 class SignProposal extends Component {
   constructor () {
     super()
-    const peer = this.getPeer()
     this.state = {
-      peer,
       proposal: null,
       params: null
     }
@@ -43,25 +39,15 @@ class SignProposal extends Component {
     }
   }
 
-  getPeer () {
-    const Peer = Grenache.PeerRPCClient
-    const link = new Link({
-      grape: 'http://127.0.0.1:30001'
-    })
-    link.start()
-    const peer = new Peer(link, {})
-    peer.init()
-    return peer
-  }
-
-  handleSigners (signers) {
-    const { whitelistMap, sigsMap } = this.state
-    if (whitelistMap && sigsMap) {
+  handleSigners () {
+    const { sigsMap, proposal, whitelistUsernameMap } = this.props
+    const { signers } = proposal
+    if (whitelistUsernameMap && sigsMap) {
       return (
         <div className='App-container-signature'>
           <div className='signature-form'>
             {signers.map((signer, index) => {
-              const user = whitelistMap.get(signer)
+              const user = whitelistUsernameMap.get(signer)
               const signed = sigsMap.has(user.username)
               if (signed) {
                 return (
@@ -102,54 +88,22 @@ class SignProposal extends Component {
   }
 
   render () {
-    const { uuid } = this.props
+    const { proposal } = this.props
     const { params } = this.props.match
-    const { proposal, whitelist, peer, error } = this.state
-    let payload = null
-    if (proposal) {
-      const {
-        msg,
-        signers,
-        sigsRequired,
-        sigs,
-        error,
-        uuid
-      } = proposal
-      payload = {
-        message: msg,
-        whitelisted: signers,
-        whitelist,
-        quorum: sigsRequired,
-        uuid,
-        sigs,
-        peer,
-        error
-      }
-    }
     const fetching = 'Fetching...'
-    if (error) {
-      // TODO: once redux is in, maybe remove div
-      return (
-        <div className='App-window'>
-          <Error error={error} />
-        </div>
-      )
-    }
 
     return (
       <div className='App-window'>
-        <ContainerHeader titles={['Proposal', uuid]} />
+        <ContainerHeader titles={['Proposal', params[0]]} />
         <div className='App-container'>
-          <label>Hash</label>
-          <p className={'p-mono'}>{params[0]}</p>
           <label>Message</label>
           <p className={'p-mono'}>{(proposal) ? proposal.msg : fetching}</p>
           <label>Whitelist</label>
-          {(proposal) ? this.handleSigners(proposal.signers) : <p className={'p-mono'}>{fetching}</p>}
+          {(proposal) ? this.handleSigners() : <p className={'p-mono'}>{fetching}</p>}
           <label>Signatures Required</label>
           {(proposal) ? this.handleSignaturesRequired(proposal.sigs, proposal.sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
-        <Signature payload={payload} />
+        <Signature />
         {this.renderError()}
       </div>
     )
@@ -159,15 +113,20 @@ class SignProposal extends Component {
 function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
+  const proposal = UI.proposal || null
+  const sigsMap = UI.sigsMap || null
+  const whitelistUsernameMap = UI.whitelistUsernameMap || null
   return {
-    error
+    error,
+    proposal,
+    sigsMap,
+    whitelistUsernameMap
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     createError: (error = 'Something went wrong.') => {
-      console.log('creating error')
       const errorOut = {
         type: 'UI_SET',
         payload: {

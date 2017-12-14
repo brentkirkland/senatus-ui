@@ -159,12 +159,8 @@
 }
 
 .window-header-deselected {
+  padding-left: 10px;
   font-weight: 400;
-  cursor: pointer;
-}
-
-.window-header-deselected:hover {
-  text-decoration: underline;
 }
 
 .App-search-input {
