@@ -3,10 +3,10 @@ import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 // import ledger from 'ledgerco'
+import { postSig } from '../middleware/grenache.middleware'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
 import { connect } from 'react-redux'
-import Error from './Error'
 import './App.css'
 
 class Signature extends Component {
@@ -44,33 +44,40 @@ class Signature extends Component {
   }
 
   handleSubmit () {
-    const { message, whitelisted, quorum } = this.props.payload
+    // TODO: Handle process
+    const {
+      message,
+      signers,
+      sigsRequired,
+      createError
+    } = this.props
+    // TODO: move button to redux
     const { button } = this.state
-    const { createError } = this.props
     let error = ''
     if (!message) {
       error = 'Needs a valid message. '
     }
-    if (!whitelisted || whitelisted.length === 0) {
+    if (!signers || signers.length === 0) {
       error += 'Needs a valid whitelisted. '
     }
-    if (!quorum) {
+    if (!sigsRequired) {
       error += 'Needs a valid quorum. '
     }
     if (!button) {
       error += 'Needs a signing process. '
     }
-    if ((quorum / whitelisted.length) <= 0.5) {
+    if ((sigsRequired / signers.length) <= 0.5) {
       error += 'A majority will not be reached with such quorum.'
     }
     if (error.length > 0) {
-      console.log('error', createError)
       createError(error)
+      // console.log('error', createError)
+      // createError(error)
       // this.setState({
       //   signed: false
       // })
     } else if (button === 'ledger') {
-      this.ledgerSign()
+      // this.ledgerSign()
     } else {
       this.web3Sign()
     }
@@ -98,15 +105,15 @@ class Signature extends Component {
     const { web3 } = this.state
     const {
       message,
-      whitelisted,
-      quorum,
+      signers,
+      sigsRequired,
       uuid,
       sigs
-    } = this.props.payload
+    } = this.props
     const data = {
       msg: message,
-      signers: whitelisted,
-      sigsRequired: quorum,
+      signers,
+      sigsRequired,
       uuid,
       sigs
     }
@@ -123,6 +130,7 @@ class Signature extends Component {
   }
 
   signMsg (msg, from) {
+    const { createError } = this.props
     const params = [msg, from]
     const method = 'personal_sign'
     const sendPayload = this.sendPayload
@@ -131,7 +139,7 @@ class Signature extends Component {
       params,
       from
     }, function (err, result) {
-      if (err) return console.error(err)
+      if (err) return createError('Something went wrong with your web3 provider. Possibly Metamask.')
       if (result.error) {
         return console.error(result.error.message)
       }
@@ -142,7 +150,7 @@ class Signature extends Component {
       if (recovered.toUpperCase() === from.toUpperCase()) {
         sendPayload(result.result, 'metamask', from)
       } else {
-        window.alert('Failed to verify signer, got: ' + result)
+        createError('Failed to verify signer, got: ' + result)
       }
     })
   }
@@ -150,52 +158,50 @@ class Signature extends Component {
   sendPayload (result, method, from) {
     const {
       message,
-      whitelisted,
-      quorum,
+      signers,
+      sigsRequired,
       uuid,
       sigs,
-      peer
-    } = this.props.payload
-    const username = this.findUser(from)
-    const error = (username) ? null : 'You are not whitelisted :('
-    this.setState({
-      signedMessage: result,
-      method: method,
-      pubKey: from,
-      signed: true,
-      error,
-      username,
-      finalMessage: message,
-      finalwhitelisted: whitelisted,
-      finalQuorum: quorum,
-      uuid,
-      sigs
-    })
-    const args = [
-      {
-        msg: message,
-        signers: whitelisted,
-        sigsRequired: quorum,
-        uuid,
-        sigs
-      },
-      {
-        signer: username,
-        signedMsg: result
-      }
-    ]
-    const addSigQuery = {
-      action: 'addSig',
-      args
+      postSignature,
+      whitelistPubkeyMap,
+      createError
+    } = this.props
+    if (whitelistPubkeyMap) {
+      const username = whitelistPubkeyMap.get(from).username
+      const args = [
+        {
+          msg: message,
+          signers,
+          sigsRequired,
+          uuid,
+          sigs
+        },
+        {
+          signer: username,
+          signedMsg: result
+        }
+      ]
+      console.log('posting signature!!!')
+      postSignature(args)
+    } else {
+      createError('Looks like you are not whitelisted.')
     }
-    peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, res) => {
-      if (err) {
-        window.alert(err)
-      }
-      this.setState({
-        hash: res
-      })
-    })
+
+    // TODO: if not username than add whitelist
+    // const error = (username) ? null : 'You are not whitelisted :('
+    // this.setState({
+    //   signedMessage: result,
+    //   method: method,
+    //   pubKey: from,
+    //   signed: true,
+    //   error,
+    //   username,
+    //   finalMessage: message,
+    //   finalwhitelisted: signers,
+    //   finalQuorum: sigsRequired,
+    //   uuid,
+    //   sigs
+    // })
   }
 
   handleRadio (e) {
@@ -239,61 +245,20 @@ class Signature extends Component {
   }
 
   renderPayload () {
-    const { signed } = this.state
-    if (signed) {
-      const {
-        signedMessage,
-        finalMessage,
-        finalwhitelisted,
-        finalQuorum,
-        username,
-        uuid,
-        sigs,
-        hash
-      } = this.state
-
-      const data = [
-        {
-          msg: finalMessage,
-          signers: finalwhitelisted,
-          sigsRequired: finalQuorum,
-          uuid,
-          sigs
-        },
-        {
-          signer: username, // lookup username
-          signedMsg: signedMessage
-        }
-      ]
+    const { payload, hash } = this.props
+    if (payload && hash) {
       return (
         <div className='App-container'>
           <label>Verified Payload</label>
           <TextArea className='container-textarea'
             spellCheck={false}
-            value={JSON.stringify(data, undefined, 2)} />
+            value={JSON.stringify(payload, undefined, 2)} />
           <label>Shareable Hash</label>
-          {(hash)
-            ? (
-              <TextArea className='container-textarea'
-                spellCheck={false}
-                value={hash} />
-              )
-            : <p>Fetching...</p>}
+          <TextArea className='container-textarea'
+            spellCheck={false}
+            value={hash} />
         </div>
       )
-    }
-    return (
-      <div className='App-container'>
-        <label>Payload</label>
-        <p>Complete proposal and sign to view payload.</p>
-      </div>
-    )
-  }
-
-  renderError () {
-    const { error } = this.state
-    if (error) {
-      return <Error error={error} />
     }
   }
 
@@ -321,7 +286,6 @@ class Signature extends Component {
             type='submit'
             defaultValue='Sign Proposal' />
         </div>
-        {this.renderError()}
         {this.handlePayload()}
       </div>
     )
@@ -331,16 +295,29 @@ class Signature extends Component {
 function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
+  const whitelist = UI.whitelist || []
+  const message = UI.message_create || null
+  const signers = UI.signers_create || []
+  const sigsRequired = UI.sigsRequired_create || null
+  const whitelistPubkeyMap = UI.whitelistPubkeyMap || null
+  const payload = UI.signature_payload || null
+  const hash = UI.hash_create || null
   // todo: fix this
   return {
-    errorbaby: error
+    errorbaby: error,
+    whitelist,
+    message,
+    signers,
+    whitelistPubkeyMap,
+    payload,
+    sigsRequired,
+    hash
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
     createError: (error = 'Something went wrong.') => {
-      console.log('creating error')
       const errorOut = {
         type: 'UI_SET',
         payload: {
@@ -349,6 +326,9 @@ function mapDispatchToProps (dispatch) {
         }
       }
       dispatch(errorOut)
+    },
+    postSignature: (args) => {
+      dispatch(postSig(args))
     }
   }
 }

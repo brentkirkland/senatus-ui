@@ -94,12 +94,10 @@ function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
   const whitelist = UI.whitelist || []
-  const message = UI.message_create || null
   const signers = UI.signers_create || []
   return {
     error,
     whitelist,
-    message,
     signers
   }
 }
@@ -142,11 +140,12 @@ function mapDispatchToProps (dispatch, ownProps) {
     },
     handleSigsRequired: (e) => {
       const { value } = e.target
+      const hardValue = parseInt(value, 10)
       const sigsRequiredCreate = {
         type: 'UI_SET',
         payload: {
           section: 'sigsRequired_create',
-          value
+          value: hardValue
         }
       }
       dispatch(sigsRequiredCreate)

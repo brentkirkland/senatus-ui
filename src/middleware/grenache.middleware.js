@@ -30,18 +30,28 @@ export function getWhitelist () {
       if (err) {
         dispatch(handleGrenacheError())
       } else {
-        const whitelistMap = new Map()
+        const whitelistUsernameMap = new Map()
+        const whitelistPubkeyMap = new Map()
         data.forEach((user) => {
-          whitelistMap.set(user.username, user)
+          whitelistUsernameMap.set(user.username, user)
+          whitelistPubkeyMap.set(user.pubkey, user)
         })
-        const whitelistMapData = {
+        const whitelistUsernameMapData = {
           type: 'UI_SET',
           payload: {
-            section: 'whitelistMap',
-            value: whitelistMap
+            section: 'whitelistUsernameMap',
+            value: whitelistUsernameMap
           }
         }
-        dispatch(whitelistMapData)
+        dispatch(whitelistUsernameMapData)
+        const whitelistPubkeyMapData = {
+          type: 'UI_SET',
+          payload: {
+            section: 'whitelistPubkeyMap',
+            value: whitelistPubkeyMap
+          }
+        }
+        dispatch(whitelistPubkeyMapData)
         const whitelistData = {
           type: 'UI_SET',
           payload: {
@@ -105,6 +115,45 @@ export function getProposal (proposalHash) {
           }
           dispatch(errorOut)
         }
+      }
+    })
+  }
+}
+
+export function postSig (args) {
+  return (dispatch) => {
+    const addSigQuery = {
+      action: 'addSig',
+      args
+    }
+    console.log(addSigQuery, 'ehhhh')
+    peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, data) => {
+      if (err) {
+        const errorOut = {
+          type: 'UI_SET',
+          payload: {
+            section: 'error',
+            value: 'Problem submitting signature. Make sure your grapes and worker are running.'
+          }
+        }
+        return errorOut
+      } else {
+        const saveArgs = {
+          type: 'UI_SET',
+          payload: {
+            section: 'signature_payload',
+            value: args
+          }
+        }
+        dispatch(saveArgs)
+        const errorOut = {
+          type: 'UI_SET',
+          payload: {
+            section: 'hash_create',
+            value: data
+          }
+        }
+        dispatch(errorOut)
       }
     })
   }
