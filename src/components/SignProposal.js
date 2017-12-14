@@ -4,6 +4,7 @@ import Signature from './Signature'
 import Error from './Error'
 import Grenache from 'grenache-nodejs-http'
 import Link from 'grenache-browser-http'
+import { getWhitelist, getProposal } from '../middleware/grenache.middleware'
 import { connect } from 'react-redux'
 
 import './App.css'
@@ -20,16 +21,25 @@ class SignProposal extends Component {
   }
 
   componentDidMount () {
-    this.getWhitelist()
-    this.getData()
+    const {
+      fetchWhitelist,
+      fetchProposal
+    } = this.props
+    fetchWhitelist()
+    fetchProposal(this.props.match.params[0])
   }
 
   componentDidUpdate () {
     const { params } = this.state
-    const { error } = this.props
-    if (!error && params && params !== this.props.match.params[0]) {
-      this.getWhitelist()
-      this.getData()
+    const {
+      error,
+      fetchWhitelist,
+      fetchProposal
+    } = this.props
+    const currentHash = this.props.match.params[0]
+    if (!error && params && params !== currentHash) {
+      fetchWhitelist()
+      fetchProposal(currentHash)
     }
   }
 
@@ -42,61 +52,6 @@ class SignProposal extends Component {
     const peer = new Peer(link, {})
     peer.init()
     return peer
-  }
-
-  getWhitelist () {
-    const { peer } = this.state
-    const { createError } = this.props
-    const fxQuery = {
-      action: 'getWhitelist',
-      args: []
-    }
-    peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
-      if (err) {
-        createError('Problem getting whitelist. Make sure your grapes and worker are running.')
-      } else {
-        const whitelistMap = new Map()
-        data.forEach(function (user) {
-          whitelistMap.set(user.username, user)
-        })
-        this.setState({
-          whitelist: data,
-          whitelistMap
-        })
-      }
-    })
-  }
-
-  getData () {
-    const { peer } = this.state
-    const { createError } = this.props
-    const { params } = this.props.match
-    const getPayloadQuery = {
-      action: 'getPayload',
-      'args': [params[0]]
-    }
-    peer.request('rest:senatus:vanilla', getPayloadQuery, { timeout: 100000 }, (err, data) => {
-      if (err) {
-        createError('Problem getting proposal. Make sure your grapes and worker are running.')
-      } else {
-        try {
-          const proposal = JSON.parse(data.v)
-          const sigsMap = new Map()
-          proposal.sigs.forEach(function (sig) {
-            sigsMap.set(sig.signer, sig)
-          })
-          this.setState({
-            proposal,
-            sigsMap,
-            params: params[0]
-          })
-        } catch (e) {
-          this.setState({
-            error: 'Looks like that proposal does not exists...'
-          })
-        }
-      }
-    })
   }
 
   handleSigners (signers) {
@@ -221,6 +176,12 @@ function mapDispatchToProps (dispatch) {
         }
       }
       dispatch(errorOut)
+    },
+    fetchWhitelist: () => {
+      dispatch(getWhitelist())
+    },
+    fetchProposal: (proposal) => {
+      dispatch(getProposal(proposal))
     }
   }
 }

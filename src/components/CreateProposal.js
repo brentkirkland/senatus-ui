@@ -83,7 +83,7 @@ class CreateProposal extends Component {
           <input onChange={handleSigsRequired}
             type='number' placeholder='Signatures Required' />
         </div>
-        <Signature />
+        <Signature process={'create'} />
         {this.renderError()}
       </div>
     )
