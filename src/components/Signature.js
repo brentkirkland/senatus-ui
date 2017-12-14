@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
-import ledger from 'ledgerco'
+// import ledger from 'ledgerco'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
 import { connect } from 'react-redux'
@@ -77,21 +77,21 @@ class Signature extends Component {
   }
 
   ledgerSign () {
-    ledger.comm_node.create_async().then(function (comm) {
-      // eslint-disable-next-line new-cap
-      const eth = new ledger.eth(comm)
-      console.log('eth', eth)
-      eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
-      .then(function (result) {
-        var v = result['v'] - 27
-        v = v.toString(16)
-        if (v.length < 2) {
-          v = '0' + v
-        }
-        console.log('Signature 0x' + result['r'] + result['s'] + v)
-      })
-      .catch(function (ex) { console.log(ex) })
-    })
+    // ledger.comm_node.create_async().then(function (comm) {
+    //   // eslint-disable-next-line new-cap
+    //   const eth = new ledger.eth(comm)
+    //   console.log('eth', eth)
+    //   eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
+    //   .then(function (result) {
+    //     var v = result['v'] - 27
+    //     v = v.toString(16)
+    //     if (v.length < 2) {
+    //       v = '0' + v
+    //     }
+    //     console.log('Signature 0x' + result['r'] + result['s'] + v)
+    //   })
+    //   .catch(function (ex) { console.log(ex) })
+    // })
   }
 
   web3Sign () {

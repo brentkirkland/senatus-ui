@@ -30,6 +30,18 @@ export function getWhitelist () {
       if (err) {
         dispatch(handleGrenacheError())
       } else {
+        const whitelistMap = new Map()
+        data.forEach((user) => {
+          whitelistMap.set(user.username, user)
+        })
+        const whitelistMapData = {
+          type: 'UI_SET',
+          payload: {
+            section: 'whitelistMap',
+            value: whitelistMap
+          }
+        }
+        dispatch(whitelistMapData)
         const whitelistData = {
           type: 'UI_SET',
           payload: {

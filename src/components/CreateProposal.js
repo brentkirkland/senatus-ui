@@ -8,64 +8,26 @@ import Error from './Error'
 import './App.css'
 
 class CreateProposal extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      message: null,
-      quorum: null,
-      whitelisted: []
-    }
-
-    this.handleMessage = this.handleMessage.bind(this)
-    this.handleWhitelist = this.handleWhitelist.bind(this)
-    this.handleQuorum = this.handleQuorum.bind(this)
-    this.handleCheckBox = this.handleCheckBox.bind(this)
-  }
-
   componentDidMount () {
     const { fetchWhitelist } = this.props
     fetchWhitelist()
   }
 
-  handleMessage (e) {
-    const { value } = e.target
-    this.setState({
-      message: value
-    })
-  }
-
-  handleWhitelist (e) {
-    const { value } = e.target
-    this.setState({
-      whitelist: value
-    })
-  }
-
-  handleQuorum (e) {
-    const { value } = e.target
-    this.setState({
-      quorum: parseInt(value, 10)
-    })
-  }
-
   handleCheckBox (e) {
     const { value } = e.target
-    const { whitelisted } = this.state
-    const index = whitelisted.indexOf(value)
+    const { signers, handleSigners } = this.props
+    const index = signers.indexOf(value)
     if (index > -1) {
-      whitelisted.splice(index, 1)
+      signers.splice(index, 1)
     } else {
-      whitelisted.push(value)
+      signers.push(value)
     }
-    this.setState({
-      whitelisted
-    })
+    handleSigners(signers)
   }
 
   renderWhitelistButton () {
     const { whitelist } = this.props
-    const handleCheckBox = this.handleCheckBox
+    const handleCheckBox = this.handleCheckBox.bind(this)
     const whitelistRows = whitelist.map((person, index) => {
       return (
         <label key={'person' + index} className='signature-label-check'>
@@ -103,35 +65,25 @@ class CreateProposal extends Component {
 
   render () {
     const {
-      message,
-      quorum,
-      whitelisted,
-      whitelist,
-      peer
-     } = this.state
-    const payload = {
-      message,
-      whitelisted,
-      whitelist,
-      quorum,
-      peer
-    }
+      handleMessage,
+      handleSigsRequired
+    } = this.props
     return (
       <div className='App-window'>
         <ContainerHeader titles={['Create Proposal']} />
         <div className='App-container'>
           <label>Message</label>
           <TextArea
-            onChange={this.handleMessage}
+            onChange={handleMessage}
             className='container-textarea'
             placeholder='Enter message' />
           <label>Whitelist</label>
           {this.renderWhitelist()}
           <label>Quorum</label>
-          <input onChange={this.handleQuorum}
+          <input onChange={handleSigsRequired}
             type='number' placeholder='Signatures Required' />
         </div>
-        <Signature payload={payload} />
+        <Signature />
         {this.renderError()}
       </div>
     )
@@ -142,13 +94,17 @@ function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
   const whitelist = UI.whitelist || []
+  const message = UI.message_create || null
+  const signers = UI.signers_create || []
   return {
     error,
-    whitelist
+    whitelist,
+    message,
+    signers
   }
 }
 
-function mapDispatchToProps (dispatch) {
+function mapDispatchToProps (dispatch, ownProps) {
   return {
     createError: (error = 'Something went wrong.') => {
       const errorOut = {
@@ -162,6 +118,38 @@ function mapDispatchToProps (dispatch) {
     },
     fetchWhitelist: () => {
       dispatch(getWhitelist())
+    },
+    handleMessage: (e) => {
+      const { value } = e.target
+      const messageCreate = {
+        type: 'UI_SET',
+        payload: {
+          section: 'message_create',
+          value
+        }
+      }
+      dispatch(messageCreate)
+    },
+    handleSigners: (value) => {
+      const sigsCreate = {
+        type: 'UI_SET',
+        payload: {
+          section: 'signers_create',
+          value
+        }
+      }
+      dispatch(sigsCreate)
+    },
+    handleSigsRequired: (e) => {
+      const { value } = e.target
+      const sigsRequiredCreate = {
+        type: 'UI_SET',
+        payload: {
+          section: 'sigsRequired_create',
+          value
+        }
+      }
+      dispatch(sigsRequiredCreate)
     }
   }
 }
