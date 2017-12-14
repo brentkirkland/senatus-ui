@@ -16,6 +16,11 @@ class SignProposal extends Component {
     }
   }
 
+  componentWillMount () {
+    const { clearPreviousData } = this.props
+    clearPreviousData()
+  }
+
   componentDidMount () {
     const {
       fetchWhitelist,
@@ -141,6 +146,24 @@ function mapDispatchToProps (dispatch) {
     },
     fetchProposal: (proposal) => {
       dispatch(getProposal(proposal))
+    },
+    clearPreviousData: () => {
+      const clearPayload = {
+        type: 'UI_SET',
+        payload: {
+          section: 'signature_payload',
+          value: null
+        }
+      }
+      dispatch(clearPayload)
+      const clearHash = {
+        type: 'UI_SET',
+        payload: {
+          section: 'hash_create',
+          value: null
+        }
+      }
+      dispatch(clearHash)
     }
   }
 }

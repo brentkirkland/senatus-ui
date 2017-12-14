@@ -182,7 +182,6 @@ class Signature extends Component {
           signedMsg: result
         }
       ]
-      console.log('posting signature!!!')
       postSignature(args)
     } else {
       createError('Looks like you are not whitelisted.')

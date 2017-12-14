@@ -11,8 +11,9 @@ class CreateProposal extends Component {
   componentWillMount () {
     // not sure how much this will be used...
     // but it's going to hang out for a little
-    const { setPage } = this.props
+    const { setPage, clearPreviousData } = this.props
     setPage('create')
+    clearPreviousData()
   }
 
   componentDidMount () {
@@ -166,6 +167,24 @@ function mapDispatchToProps (dispatch, ownProps) {
         }
       }
       dispatch(pageData)
+    },
+    clearPreviousData: () => {
+      const clearPayload = {
+        type: 'UI_SET',
+        payload: {
+          section: 'signature_payload',
+          value: null
+        }
+      }
+      dispatch(clearPayload)
+      const clearHash = {
+        type: 'UI_SET',
+        payload: {
+          section: 'hash_create',
+          value: null
+        }
+      }
+      dispatch(clearHash)
     }
   }
 }
