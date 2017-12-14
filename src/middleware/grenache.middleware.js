@@ -20,6 +20,17 @@ function handleGrenacheError () {
   return errorOut
 }
 
+function clearError () {
+  const clearMsg = {
+    type: 'UI_SET',
+    payload: {
+      section: 'error',
+      value: null
+    }
+  }
+  return clearMsg
+}
+
 export function getWhitelist () {
   return (dispatch) => {
     const fxQuery = {
@@ -153,6 +164,7 @@ export function postSig (args) {
           }
         }
         dispatch(errorOut)
+        dispatch(clearError())
       }
     })
   }

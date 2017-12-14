@@ -8,6 +8,13 @@ import Error from './Error'
 import './App.css'
 
 class CreateProposal extends Component {
+  componentWillMount () {
+    // not sure how much this will be used...
+    // but it's going to hang out for a little
+    const { setPage } = this.props
+    setPage('create')
+  }
+
   componentDidMount () {
     const { fetchWhitelist } = this.props
     fetchWhitelist()
@@ -149,6 +156,16 @@ function mapDispatchToProps (dispatch, ownProps) {
         }
       }
       dispatch(sigsRequiredCreate)
+    },
+    setPage: (value) => {
+      const pageData = {
+        type: 'UI_SET',
+        payload: {
+          section: 'page',
+          value
+        }
+      }
+      dispatch(pageData)
     }
   }
 }

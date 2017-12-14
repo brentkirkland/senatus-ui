@@ -123,7 +123,7 @@ class Signature extends Component {
     web3.eth.getAccounts(function (err, accounts) {
       if (err) createError('Could not get account')
       if (!accounts) {
-        console.error('no accounts')
+        createError('no accounts')
         return
       }
       signMsg(msg, accounts[0])
