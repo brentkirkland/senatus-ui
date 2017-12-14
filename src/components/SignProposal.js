@@ -77,18 +77,24 @@ class SignProposal extends Component {
   }
 
   handleSignaturesRequired (sigs, sigsRequired) {
-    console.log(sigs, sigsRequired, 'bob')
     const amountLeft = sigsRequired - sigs.length
     if (amountLeft > 0) {
       return <p className={'p-mono'}>{amountLeft + ' more. ' + sigsRequired + ' total. '}</p>
     }
-    return <p className={'p-mono'}>{'None. Process Complete.'}</p>
+    return <p className={'p-mono'}>{'No more signatures required. Concensus was reached.'}</p>
   }
 
   renderError () {
     const { error } = this.props
     if (error) {
       return <Error />
+    }
+  }
+
+  renderSignature () {
+    const { sigsRequired, sigs } = this.props
+    if (sigs && sigs.length < sigsRequired) {
+      return <Signature />
     }
   }
 
@@ -108,7 +114,7 @@ class SignProposal extends Component {
           <label>Signatures Required</label>
           {(sigs) ? this.handleSignaturesRequired(sigs, sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
-        <Signature />
+        {this.renderSignature()}
         {this.renderError()}
       </div>
     )

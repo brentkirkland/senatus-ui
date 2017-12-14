@@ -71,11 +71,6 @@ class Signature extends Component {
     }
     if (error.length > 0) {
       createError(error)
-      // console.log('error', createError)
-      // createError(error)
-      // this.setState({
-      //   signed: false
-      // })
     } else if (button === 'ledger') {
       // this.ledgerSign()
     } else {
@@ -258,7 +253,6 @@ class Signature extends Component {
 
 function mapStateToProps (state) {
   const { UI = {} } = state
-  const error = UI.error || null
   const whitelist = UI.whitelist || []
   const message = UI.message || null
   const signers = UI.signers || []
@@ -268,9 +262,8 @@ function mapStateToProps (state) {
   const whitelistPubkeyMap = UI.whitelistPubkeyMap || null
   const payload = UI.signature_payload || null
   const hash = UI.hash_create || null
-  // todo: fix this
+
   return {
-    errorbaby: error,
     whitelist,
     message,
     signers,
