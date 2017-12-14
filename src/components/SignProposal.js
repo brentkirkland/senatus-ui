@@ -45,8 +45,7 @@ class SignProposal extends Component {
   }
 
   handleSigners () {
-    const { sigsMap, proposal, whitelistUsernameMap } = this.props
-    const { signers } = proposal
+    const { sigsMap, signers, whitelistUsernameMap } = this.props
     if (whitelistUsernameMap && sigsMap) {
       return (
         <div className='App-container-signature'>
@@ -78,6 +77,7 @@ class SignProposal extends Component {
   }
 
   handleSignaturesRequired (sigs, sigsRequired) {
+    console.log(sigs, sigsRequired, 'bob')
     const amountLeft = sigsRequired - sigs.length
     if (amountLeft > 0) {
       return <p className={'p-mono'}>{amountLeft + ' more. ' + sigsRequired + ' total. '}</p>
@@ -93,7 +93,7 @@ class SignProposal extends Component {
   }
 
   render () {
-    const { proposal } = this.props
+    const { message, sigsRequired, sigs } = this.props
     const { params } = this.props.match
     const fetching = 'Fetching...'
 
@@ -102,11 +102,11 @@ class SignProposal extends Component {
         <ContainerHeader titles={['Proposal', params[0]]} />
         <div className='App-container'>
           <label>Message</label>
-          <p className={'p-mono'}>{(proposal) ? proposal.msg : fetching}</p>
+          <p className={'p-mono'}>{(sigs) ? message : fetching}</p>
           <label>Whitelist</label>
-          {(proposal) ? this.handleSigners() : <p className={'p-mono'}>{fetching}</p>}
+          {(sigs) ? this.handleSigners() : <p className={'p-mono'}>{fetching}</p>}
           <label>Signatures Required</label>
-          {(proposal) ? this.handleSignaturesRequired(proposal.sigs, proposal.sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
+          {(sigs) ? this.handleSignaturesRequired(sigs, sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
         <Signature />
         {this.renderError()}
@@ -118,14 +118,20 @@ class SignProposal extends Component {
 function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
-  const proposal = UI.proposal || null
+  const message = UI.message || null
+  const signers = UI.signers || []
+  const sigsRequired = UI.sigsRequired || null
+  const sigs = UI.sigs || undefined
   const sigsMap = UI.sigsMap || null
   const whitelistUsernameMap = UI.whitelistUsernameMap || null
   return {
     error,
-    proposal,
     sigsMap,
-    whitelistUsernameMap
+    whitelistUsernameMap,
+    signers,
+    message,
+    sigs,
+    sigsRequired
   }
 }
 

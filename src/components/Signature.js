@@ -260,9 +260,11 @@ function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
   const whitelist = UI.whitelist || []
-  const message = UI.message_create || null
-  const signers = UI.signers_create || []
-  const sigsRequired = UI.sigsRequired_create || null
+  const message = UI.message || null
+  const signers = UI.signers || []
+  const sigsRequired = UI.sigsRequired || null
+  const sigs = UI.sigs || undefined
+  const uuid = UI.uuid || undefined
   const whitelistPubkeyMap = UI.whitelistPubkeyMap || null
   const payload = UI.signature_payload || null
   const hash = UI.hash_create || null
@@ -275,7 +277,9 @@ function mapStateToProps (state) {
     whitelistPubkeyMap,
     payload,
     sigsRequired,
-    hash
+    hash,
+    sigs,
+    uuid
   }
 }
 

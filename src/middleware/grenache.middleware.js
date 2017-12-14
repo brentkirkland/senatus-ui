@@ -86,20 +86,64 @@ export function getProposal (proposalHash) {
       if (err) {
         dispatch(handleGrenacheError())
       } else {
+        console.log('suh')
         try {
           const proposal = JSON.parse(data.v)
           const sigsMap = new Map()
           proposal.sigs.forEach(function (sig) {
             sigsMap.set(sig.signer, sig)
           })
-          const parsedProposal = {
+
+          // message
+          const parsedMessage = {
             type: 'UI_SET',
             payload: {
-              section: 'proposal',
-              value: proposal
+              section: 'message',
+              value: proposal.msg
             }
           }
-          dispatch(parsedProposal)
+          dispatch(parsedMessage)
+
+          // signers
+          const parsedSigners = {
+            type: 'UI_SET',
+            payload: {
+              section: 'signers',
+              value: proposal.signers
+            }
+          }
+          dispatch(parsedSigners)
+
+          // sigsRequired
+          const parsedSigsRequired = {
+            type: 'UI_SET',
+            payload: {
+              section: 'sigsRequired',
+              value: proposal.sigsRequired
+            }
+          }
+          dispatch(parsedSigsRequired)
+
+          // uuid
+          const parsedUUID = {
+            type: 'UI_SET',
+            payload: {
+              section: 'uuid',
+              value: proposal.uuid
+            }
+          }
+          dispatch(parsedUUID)
+
+          // sigs
+          const parsedSigs = {
+            type: 'UI_SET',
+            payload: {
+              section: 'sigs',
+              value: proposal.sigs
+            }
+          }
+          dispatch(parsedSigs)
+
           const sigs = {
             type: 'UI_SET',
             payload: {

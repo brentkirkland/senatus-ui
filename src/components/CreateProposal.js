@@ -102,7 +102,7 @@ function mapStateToProps (state) {
   const { UI = {} } = state
   const error = UI.error || null
   const whitelist = UI.whitelist || []
-  const signers = UI.signers_create || []
+  const signers = UI.signers || []
   return {
     error,
     whitelist,
@@ -130,7 +130,7 @@ function mapDispatchToProps (dispatch, ownProps) {
       const messageCreate = {
         type: 'UI_SET',
         payload: {
-          section: 'message_create',
+          section: 'message',
           value
         }
       }
@@ -140,7 +140,7 @@ function mapDispatchToProps (dispatch, ownProps) {
       const sigsCreate = {
         type: 'UI_SET',
         payload: {
-          section: 'signers_create',
+          section: 'signers',
           value
         }
       }
@@ -152,7 +152,7 @@ function mapDispatchToProps (dispatch, ownProps) {
       const sigsRequiredCreate = {
         type: 'UI_SET',
         payload: {
-          section: 'sigsRequired_create',
+          section: 'sigsRequired',
           value: hardValue
         }
       }
