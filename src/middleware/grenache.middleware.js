@@ -126,7 +126,6 @@ export function postSig (args) {
       action: 'addSig',
       args
     }
-    console.log(addSigQuery, 'ehhhh')
     peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, data) => {
       if (err) {
         const errorOut = {
