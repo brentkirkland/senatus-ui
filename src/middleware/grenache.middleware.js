@@ -86,90 +86,104 @@ export function getProposal (proposalHash) {
       if (err) {
         dispatch(handleGrenacheError())
       } else {
-        console.log('suh')
+        let msg = null
+        let signers = null
+        let sigsRequired = null
+        let uuid = null
+        let sigs = null
+        let sigsMap = null
+        let error = null
         try {
           const proposal = JSON.parse(data.v)
-          const sigsMap = new Map()
+          sigsMap = new Map()
           proposal.sigs.forEach(function (sig) {
             sigsMap.set(sig.signer, sig)
           })
-
-          // message
-          const parsedMessage = {
-            type: 'UI_SET',
-            payload: {
-              section: 'message',
-              value: proposal.msg
-            }
-          }
-          dispatch(parsedMessage)
-
-          // signers
-          const parsedSigners = {
-            type: 'UI_SET',
-            payload: {
-              section: 'signers',
-              value: proposal.signers
-            }
-          }
-          dispatch(parsedSigners)
-
-          // sigsRequired
-          const parsedSigsRequired = {
-            type: 'UI_SET',
-            payload: {
-              section: 'sigsRequired',
-              value: proposal.sigsRequired
-            }
-          }
-          dispatch(parsedSigsRequired)
-
-          // uuid
-          const parsedUUID = {
-            type: 'UI_SET',
-            payload: {
-              section: 'uuid',
-              value: proposal.uuid
-            }
-          }
-          dispatch(parsedUUID)
-
-          // sigs
-          const parsedSigs = {
-            type: 'UI_SET',
-            payload: {
-              section: 'sigs',
-              value: proposal.sigs
-            }
-          }
-          dispatch(parsedSigs)
-
-          const sigs = {
-            type: 'UI_SET',
-            payload: {
-              section: 'sigsMap',
-              value: sigsMap
-            }
-          }
-          dispatch(sigs)
-          const hash = {
-            type: 'UI_SET',
-            payload: {
-              section: 'hash',
-              value: proposalHash
-            }
-          }
-          dispatch(hash)
+          msg = proposal.msg
+          signers = proposal.signers
+          sigsRequired = proposal.sigsRequired
+          uuid = proposal.uuid
+          sigs = proposal.sigs
         } catch (e) {
-          const errorOut = {
-            type: 'UI_SET',
-            payload: {
-              section: 'error',
-              value: 'Looks like that proposal does not exist.'
-            }
-          }
-          dispatch(errorOut)
+          error = 'Looks like that proposal does not exist.'
         }
+
+        // message
+        const parsedMessage = {
+          type: 'UI_SET',
+          payload: {
+            section: 'message',
+            value: msg
+          }
+        }
+        dispatch(parsedMessage)
+
+        // signers
+        const parsedSigners = {
+          type: 'UI_SET',
+          payload: {
+            section: 'signers',
+            value: signers
+          }
+        }
+        dispatch(parsedSigners)
+
+        // sigsRequired
+        const parsedSigsRequired = {
+          type: 'UI_SET',
+          payload: {
+            section: 'sigsRequired',
+            value: sigsRequired
+          }
+        }
+        dispatch(parsedSigsRequired)
+
+        // uuid
+        const parsedUUID = {
+          type: 'UI_SET',
+          payload: {
+            section: 'uuid',
+            value: uuid
+          }
+        }
+        dispatch(parsedUUID)
+
+        // sigs
+        const parsedSigs = {
+          type: 'UI_SET',
+          payload: {
+            section: 'sigs',
+            value: sigs
+          }
+        }
+        dispatch(parsedSigs)
+
+        const parsedSigsMap = {
+          type: 'UI_SET',
+          payload: {
+            section: 'sigsMap',
+            value: sigsMap
+          }
+        }
+        dispatch(parsedSigsMap)
+
+        const hash = {
+          type: 'UI_SET',
+          payload: {
+            section: 'hash',
+            value: proposalHash
+          }
+        }
+        dispatch(hash)
+
+        const errorOut = {
+          type: 'UI_SET',
+          payload: {
+            section: 'error',
+            value: error
+          }
+        }
+        dispatch(errorOut)
       }
     })
   }

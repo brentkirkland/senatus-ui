@@ -11,9 +11,10 @@ class CreateProposal extends Component {
   componentWillMount () {
     // not sure how much this will be used...
     // but it's going to hang out for a little
-    const { setPage, clearPreviousData } = this.props
+    const { setPage, clearPreviousData, createError } = this.props
     setPage('create')
     clearPreviousData()
+    createError(null)
   }
 
   componentDidMount () {

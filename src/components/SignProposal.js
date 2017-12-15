@@ -8,14 +8,6 @@ import { connect } from 'react-redux'
 import './App.css'
 
 class SignProposal extends Component {
-  constructor () {
-    super()
-    this.state = {
-      proposal: null,
-      params: null
-    }
-  }
-
   componentWillMount () {
     const { clearPreviousData } = this.props
     clearPreviousData()
@@ -31,15 +23,12 @@ class SignProposal extends Component {
   }
 
   componentDidUpdate () {
-    const { params } = this.state
     const {
-      error,
-      fetchWhitelist,
-      fetchProposal
+      fetchProposal,
+      hash
     } = this.props
     const currentHash = this.props.match.params[0]
-    if (!error && params && params !== currentHash) {
-      fetchWhitelist()
+    if (hash && hash !== currentHash) {
       fetchProposal(currentHash)
     }
   }
@@ -114,7 +103,7 @@ class SignProposal extends Component {
           <label>Signatures Required</label>
           {(sigs) ? this.handleSignaturesRequired(sigs, sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
-        {this.renderSignature()}
+        <Signature />
         {this.renderError()}
       </div>
     )
@@ -129,6 +118,7 @@ function mapStateToProps (state) {
   const sigsRequired = UI.sigsRequired || null
   const sigs = UI.sigs || undefined
   const sigsMap = UI.sigsMap || null
+  const hash = UI.hash || null
   const whitelistUsernameMap = UI.whitelistUsernameMap || null
   return {
     error,
@@ -137,7 +127,8 @@ function mapStateToProps (state) {
     signers,
     message,
     sigs,
-    sigsRequired
+    sigsRequired,
+    hash
   }
 }
 
