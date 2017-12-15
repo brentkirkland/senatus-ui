@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import Web3 from 'web3'
-import sigUtil from 'eth-sig-util'
-import ethUtil from 'ethereumjs-util'
 // import ledger from 'ledgerco'
 import actions from '../actions'
 import { postSig } from '../middleware/grenache.middleware'
+import { metamaskSign } from '../middleware/ethereum.middleware'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
 import { connect } from 'react-redux'
@@ -19,9 +18,6 @@ class Signature extends Component {
     }
 
     this.handleRadio = this.handleRadio.bind(this)
-    this.web3Sign = this.web3Sign.bind(this)
-    this.signMsg = this.signMsg.bind(this)
-    this.sendPayload = this.sendPayload.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
@@ -41,12 +37,15 @@ class Signature extends Component {
   }
 
   handleSubmit () {
-    // TODO: Handle process
     const {
       message,
       signers,
       sigsRequired,
-      createError
+      uuid,
+      sigs,
+      whitelistPubkeyMap,
+      createError,
+      handleWeb3
     } = this.props
     // TODO: move button to redux
     const { button } = this.state
@@ -71,7 +70,16 @@ class Signature extends Component {
     } else if (button === 'ledger') {
       // this.ledgerSign()
     } else {
-      this.web3Sign()
+      // this.web3Sign()
+      const data = {
+        msg: message,
+        signers,
+        sigsRequired,
+        uuid,
+        sigs,
+        whitelistMap: whitelistPubkeyMap
+      }
+      handleWeb3(data)
     }
   }
 
@@ -91,93 +99,6 @@ class Signature extends Component {
     //   })
     //   .catch(function (ex) { console.log(ex) })
     // })
-  }
-
-  web3Sign () {
-    const { web3 } = this.state
-    const {
-      message,
-      signers,
-      sigsRequired,
-      uuid,
-      sigs,
-      createError
-    } = this.props
-    const data = {
-      msg: message,
-      signers,
-      sigsRequired,
-      uuid,
-      sigs
-    }
-    const msg = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
-    const signMsg = this.signMsg
-    web3.eth.getAccounts(function (err, accounts) {
-      if (err) createError('Could not get account')
-      if (!accounts) {
-        createError('no accounts')
-        return
-      }
-      signMsg(msg, accounts[0])
-    })
-  }
-
-  signMsg (msg, from) {
-    const { createError } = this.props
-    const params = [msg, from]
-    const method = 'personal_sign'
-    const sendPayload = this.sendPayload
-    this.state.web3.currentProvider.sendAsync({
-      method,
-      params,
-      from
-    }, function (err, result) {
-      if (err) return createError('Something went wrong with your web3 provider. Possibly Metamask.')
-      if (result.error) {
-        return createError(result.error.message)
-      }
-      const recovered = sigUtil.recoverPersonalSignature({
-        data: msg,
-        sig: result.result
-      })
-      if (recovered.toUpperCase() === from.toUpperCase()) {
-        sendPayload(result.result, 'metamask', from)
-      } else {
-        createError('Failed to verify signer, got: ' + result)
-      }
-    })
-  }
-
-  sendPayload (result, method, from) {
-    const {
-      message,
-      signers,
-      sigsRequired,
-      uuid,
-      sigs,
-      postSignature,
-      whitelistPubkeyMap,
-      createError
-    } = this.props
-    if (whitelistPubkeyMap) {
-      const username = whitelistPubkeyMap.get(from).username
-      const args = [
-        {
-          msg: message,
-          signers,
-          sigsRequired,
-          uuid,
-          sigs
-        },
-        {
-          signer: username,
-          signedMsg: result
-        }
-      ]
-      postSignature(args)
-    } else {
-      createError('Looks like you are not whitelisted.')
-    }
   }
 
   handleRadio (e) {
@@ -286,7 +207,8 @@ function mapDispatchToProps (dispatch) {
     },
     postSignature: (args) => {
       dispatch(postSig(args))
-    }
+    },
+    handleWeb3: (payload) => dispatch(metamaskSign(payload))
   }
 }
 
