@@ -3,6 +3,7 @@ import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 // import ledger from 'ledgerco'
+import { errorAction } from '../actions/UI.actions'
 import { postSig } from '../middleware/grenache.middleware'
 import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
@@ -279,13 +280,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     createError: (error = 'Something went wrong.') => {
-      const errorOut = {
-        type: 'UI_SET',
-        payload: {
-          section: 'error',
-          value: error
-        }
-      }
+      const errorOut = errorAction(error)
       dispatch(errorOut)
     },
     postSignature: (args) => {

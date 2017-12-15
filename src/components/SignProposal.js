@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
 import Error from './Error'
+import { errorAction } from '../actions/UI.actions'
 import { getWhitelist, getProposal } from '../middleware/grenache.middleware'
 import { connect } from 'react-redux'
 
@@ -135,13 +136,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     createError: (error = 'Something went wrong.') => {
-      const errorOut = {
-        type: 'UI_SET',
-        payload: {
-          section: 'error',
-          value: error
-        }
-      }
+      const errorOut = errorAction(error)
       dispatch(errorOut)
     },
     fetchWhitelist: () => {
