@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
 import { getWhitelist } from '../middleware/grenache.middleware'
-import { errorAction } from '../actions/UI.actions'
+import actions from '../actions'
 import Error from './Error'
 import './App.css'
 
@@ -113,6 +113,11 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch, ownProps) {
+  const { UI = {} } = actions
+  const {
+    errorAction
+  } = UI
+
   return {
     createError: (error = 'Something went wrong.') => {
       const errorOut = errorAction(error)

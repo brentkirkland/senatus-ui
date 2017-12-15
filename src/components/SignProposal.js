@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
 import Error from './Error'
-import { errorAction } from '../actions/UI.actions'
+import actions from '../actions'
 import { getWhitelist, getProposal } from '../middleware/grenache.middleware'
 import { connect } from 'react-redux'
 
@@ -134,6 +134,12 @@ function mapStateToProps (state) {
 }
 
 function mapDispatchToProps (dispatch) {
+  const { UI = {} } = actions
+  const {
+    errorAction,
+    clearSection
+  } = UI
+
   return {
     createError: (error = 'Something went wrong.') => {
       const errorOut = errorAction(error)
@@ -146,21 +152,9 @@ function mapDispatchToProps (dispatch) {
       dispatch(getProposal(proposal))
     },
     clearPreviousData: () => {
-      const clearPayload = {
-        type: 'UI_SET',
-        payload: {
-          section: 'signature_payload',
-          value: null
-        }
-      }
-      dispatch(clearPayload)
-      const clearHash = {
-        type: 'UI_SET',
-        payload: {
-          section: 'hash_create',
-          value: null
-        }
-      }
+      const clearSignature = clearSection('signature_payload')
+      dispatch(clearSignature)
+      const clearHash = clearSection('hash_create')
       dispatch(clearHash)
     }
   }

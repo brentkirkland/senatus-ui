@@ -1,10 +1,26 @@
-export const errorAction = (error = 'Something went wrong.') => {
-  const errorOut = {
+const errorAction = (error = 'Something went wrong.') => {
+  const payload = {
     type: 'UI_SET',
     payload: {
       section: 'error',
       value: error
     }
   }
-  return errorOut
+  return payload
+}
+
+const clearSection = (section) => {
+  const payload = {
+    type: 'UI_SET',
+    payload: {
+      section,
+      value: null
+    }
+  }
+  return payload
+}
+
+export default {
+  errorAction,
+  clearSection
 }
