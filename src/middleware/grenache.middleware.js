@@ -1,5 +1,6 @@
 import Grenache from 'grenache-nodejs-http'
 import Link from 'grenache-browser-http'
+import actions from '../actions'
 
 const Peer = Grenache.PeerRPCClient
 const link = new Link({
@@ -9,26 +10,23 @@ link.start()
 const peer = new Peer(link, {})
 peer.init()
 
+const { UI = {} } = actions
+const {
+  errorAction,
+  clearSection,
+  setUI
+} = UI
+
 function handleGrenacheError () {
-  const errorOut = {
-    type: 'UI_SET',
-    payload: {
-      section: 'error',
-      value: 'Problem getting whitelist. Make sure your grapes and worker are running.'
-    }
-  }
-  return errorOut
+  const error = 'Problem getting whitelist. Make sure your grapes and worker are running.'
+  const action = errorAction(error)
+  return action
 }
 
 function clearError () {
-  const clearMsg = {
-    type: 'UI_SET',
-    payload: {
-      section: 'error',
-      value: null
-    }
-  }
-  return clearMsg
+  const section = 'error'
+  const action = clearSection(section)
+  return action
 }
 
 export function getWhitelist () {
@@ -47,30 +45,14 @@ export function getWhitelist () {
           whitelistUsernameMap.set(user.username, user)
           whitelistPubkeyMap.set(user.pubkey, user)
         })
-        const whitelistUsernameMapData = {
-          type: 'UI_SET',
-          payload: {
-            section: 'whitelistUsernameMap',
-            value: whitelistUsernameMap
-          }
-        }
-        dispatch(whitelistUsernameMapData)
-        const whitelistPubkeyMapData = {
-          type: 'UI_SET',
-          payload: {
-            section: 'whitelistPubkeyMap',
-            value: whitelistPubkeyMap
-          }
-        }
-        dispatch(whitelistPubkeyMapData)
-        const whitelistData = {
-          type: 'UI_SET',
-          payload: {
-            section: 'whitelist',
-            value: data
-          }
-        }
-        dispatch(whitelistData)
+        const actionOne = setUI('whitelistUsernameMap', whitelistUsernameMap)
+        dispatch(actionOne)
+
+        const actionTwo = setUI('whitelistPubkeyMap', whitelistPubkeyMap)
+        dispatch(actionTwo)
+
+        const actionThree = setUI('whitelist', data)
+        dispatch(actionThree)
       }
     })
   }
@@ -109,80 +91,34 @@ export function getProposal (proposalHash) {
         }
 
         // message
-        const parsedMessage = {
-          type: 'UI_SET',
-          payload: {
-            section: 'message',
-            value: msg
-          }
-        }
+        const parsedMessage = setUI('message', msg)
         dispatch(parsedMessage)
 
         // signers
-        const parsedSigners = {
-          type: 'UI_SET',
-          payload: {
-            section: 'signers',
-            value: signers
-          }
-        }
+        const parsedSigners = setUI('signers', signers)
         dispatch(parsedSigners)
 
         // sigsRequired
-        const parsedSigsRequired = {
-          type: 'UI_SET',
-          payload: {
-            section: 'sigsRequired',
-            value: sigsRequired
-          }
-        }
+        const parsedSigsRequired = setUI('sigsRequired', sigsRequired)
         dispatch(parsedSigsRequired)
 
         // uuid
-        const parsedUUID = {
-          type: 'UI_SET',
-          payload: {
-            section: 'uuid',
-            value: uuid
-          }
-        }
+        const parsedUUID = setUI('uuid', uuid)
         dispatch(parsedUUID)
 
         // sigs
-        const parsedSigs = {
-          type: 'UI_SET',
-          payload: {
-            section: 'sigs',
-            value: sigs
-          }
-        }
+        const parsedSigs = setUI('sigs', sigs)
         dispatch(parsedSigs)
 
-        const parsedSigsMap = {
-          type: 'UI_SET',
-          payload: {
-            section: 'sigsMap',
-            value: sigsMap
-          }
-        }
+        // sigsMap
+        const parsedSigsMap = setUI('sigsMap', sigsMap)
         dispatch(parsedSigsMap)
 
-        const hash = {
-          type: 'UI_SET',
-          payload: {
-            section: 'hash',
-            value: proposalHash
-          }
-        }
+        // hash
+        const hash = setUI('hash', proposalHash)
         dispatch(hash)
 
-        const errorOut = {
-          type: 'UI_SET',
-          payload: {
-            section: 'error',
-            value: error
-          }
-        }
+        const errorOut = errorAction(error)
         dispatch(errorOut)
       }
     })
@@ -197,31 +133,15 @@ export function postSig (args) {
     }
     peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, data) => {
       if (err) {
-        const errorOut = {
-          type: 'UI_SET',
-          payload: {
-            section: 'error',
-            value: 'Problem submitting signature. Make sure your grapes and worker are running.'
-          }
-        }
+        const errorStr = 'Problem submitting signature. Make sure your grapes and worker are running.'
+        const errorOut = errorAction(errorStr)
         return errorOut
       } else {
-        const saveArgs = {
-          type: 'UI_SET',
-          payload: {
-            section: 'signature_payload',
-            value: args
-          }
-        }
-        dispatch(saveArgs)
-        const errorOut = {
-          type: 'UI_SET',
-          payload: {
-            section: 'hash_create',
-            value: data
-          }
-        }
-        dispatch(errorOut)
+        const sigAction = setUI('signature_payload', args)
+        dispatch(sigAction)
+
+        const hashAction = setUI('hash_create', data)
+        dispatch(hashAction)
         dispatch(clearError())
       }
     })

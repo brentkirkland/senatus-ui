@@ -15,11 +15,7 @@ class Signature extends Component {
     super(props)
 
     this.state = {
-      button: null,
-      signed: false,
-      pubKey: null,
-      signedMessage: null,
-      error: null
+      button: null
     }
 
     this.handleRadio = this.handleRadio.bind(this)
