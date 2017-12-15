@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import actions from '../actions'
 import { postSig } from '../middleware/grenache.middleware'
 import { metamaskSign } from '../middleware/ethereum.middleware'
-import TextArea from 'react-textarea-autosize'
 import ContainerHeader from './ContainerHeader'
-import { connect } from 'react-redux'
 import './App.css'
 
 class Signature extends Component {
@@ -94,27 +93,6 @@ class Signature extends Component {
     )
   }
 
-  handlePayload () {
-    const { payload, hash } = this.props
-    if (payload && hash) {
-      return (
-        <div>
-          <ContainerHeader titles={['Payload']} success />
-          <div className='App-container'>
-            <label>Verified Payload</label>
-            <TextArea className='container-textarea'
-              spellCheck={false}
-              value={JSON.stringify(payload, undefined, 2)} />
-            <label>Shareable Hash</label>
-            <TextArea className='container-textarea'
-              spellCheck={false}
-              value={hash} />
-          </div>
-        </div>
-      )
-    }
-  }
-
   render () {
     return (
       <div>
@@ -127,7 +105,6 @@ class Signature extends Component {
             type='submit'
             defaultValue='Sign Proposal' />
         </div>
-        {this.handlePayload()}
       </div>
     )
   }
@@ -142,17 +119,12 @@ function mapStateToProps (state) {
   const sigs = UI.sigs || undefined
   const uuid = UI.uuid || undefined
   const whitelistPubkeyMap = UI.whitelistPubkeyMap || null
-  const payload = UI.signature_payload || null
-  const hash = UI.hash_create || null
-
   return {
     whitelist,
     message,
     signers,
     whitelistPubkeyMap,
-    payload,
     sigsRequired,
-    hash,
     sigs,
     uuid
   }

@@ -142,7 +142,17 @@ export function postSig (args) {
 
         const hashAction = setUI('hash_create', data)
         dispatch(hashAction)
+
+        // greeting
+        if (!args[0].sigs) {
+          const postSigStep = setUI('post_sig_step', 'created')
+          dispatch(postSigStep)
+        } else {
+          const postSigStep = setUI('post_sig_step', 'signed')
+          dispatch(postSigStep)
+        }
         dispatch(clearError())
+        dispatch(getProposal(data))
       }
     })
   }

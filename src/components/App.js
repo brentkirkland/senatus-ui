@@ -4,6 +4,7 @@ import sigUtil from 'eth-sig-util'
 import TextArea from 'react-textarea-autosize'
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 import Window from './Window'
+import Greeting from './Greeting'
 import CreateProposal from './CreateProposal'
 import SignProposal from './SignProposal'
 import NotFound from './NotFound'
@@ -297,8 +298,7 @@ class App extends Component {
             </div>
           </header>
           <div className='App-space'>
-            <br />
-            <br />
+            <Greeting />
             <Switch>
               <Route exact path='/' component={CreateProposal} />
               <Route path='/proposal/*' component={SignProposal} />

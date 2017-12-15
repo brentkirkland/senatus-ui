@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
-import Error from './Error'
+import Payload from './Payload'
+import Greeting from './Greeting'
 import actions from '../actions'
 import { getWhitelist, getProposal } from '../middleware/grenache.middleware'
 import { connect } from 'react-redux'
@@ -74,17 +75,27 @@ class SignProposal extends Component {
     return <p className={'p-mono'}>{'No more signatures required. Concensus was reached.'}</p>
   }
 
-  renderError () {
-    const { error } = this.props
-    if (error) {
-      return <Error />
+  renderSignature () {
+    const { sigsRequired, sigs, sigStep } = this.props
+    if (sigs && sigs.length < sigsRequired &&
+      sigStep !== 'created' && sigStep !== 'signed') {
+      return <Signature />
     }
   }
 
-  renderSignature () {
-    const { sigsRequired, sigs } = this.props
-    if (sigs && sigs.length < sigsRequired) {
-      return <Signature />
+  renderPayload () {
+    const { payload, hash } = this.props
+    // helpful for debugging
+    const dev = false
+    if (dev && payload && hash) {
+      return <Payload />
+    }
+  }
+
+  renderGreeting () {
+    const { sigStep } = this.props
+    if (sigStep && (sigStep === 'created' || sigStep === 'signed')) {
+      return <Greeting />
     }
   }
 
@@ -104,8 +115,8 @@ class SignProposal extends Component {
           <label>Signatures Required</label>
           {(sigs) ? this.handleSignaturesRequired(sigs, sigsRequired) : <p className={'p-mono'}>{fetching}</p>}
         </div>
-        <Signature />
-        {this.renderError()}
+        {this.renderSignature()}
+        {this.renderPayload()}
       </div>
     )
   }
@@ -119,8 +130,10 @@ function mapStateToProps (state) {
   const sigsRequired = UI.sigsRequired || null
   const sigs = UI.sigs || undefined
   const sigsMap = UI.sigsMap || null
+  const payload = UI.signature_payload || null
   const hash = UI.hash || null
   const whitelistUsernameMap = UI.whitelistUsernameMap || null
+  const sigStep = UI.post_sig_step || null
   return {
     error,
     sigsMap,
@@ -129,7 +142,9 @@ function mapStateToProps (state) {
     message,
     sigs,
     sigsRequired,
-    hash
+    hash,
+    payload,
+    sigStep
   }
 }
 
@@ -145,12 +160,8 @@ function mapDispatchToProps (dispatch) {
       const errorOut = errorAction(error)
       dispatch(errorOut)
     },
-    fetchWhitelist: () => {
-      dispatch(getWhitelist())
-    },
-    fetchProposal: (proposal) => {
-      dispatch(getProposal(proposal))
-    },
+    fetchWhitelist: () => dispatch(getWhitelist()),
+    fetchProposal: (proposal) => dispatch(getProposal(proposal)),
     clearPreviousData: () => {
       const clearSignature = clearSection('signature_payload')
       dispatch(clearSignature)

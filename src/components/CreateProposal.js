@@ -5,7 +5,6 @@ import ContainerHeader from './ContainerHeader'
 import Signature from './Signature'
 import { getWhitelist } from '../middleware/grenache.middleware'
 import actions from '../actions'
-import Error from './Error'
 import './App.css'
 
 class CreateProposal extends Component {
@@ -16,6 +15,13 @@ class CreateProposal extends Component {
     setPage('create')
     clearPreviousData()
     createError(null)
+  }
+
+  componentDidUpdate () {
+    const { payload, hash, history } = this.props
+    if (payload && hash) {
+      history.push('/proposal/' + hash)
+    }
   }
 
   componentDidMount () {
@@ -66,18 +72,10 @@ class CreateProposal extends Component {
     )
   }
 
-  renderError () {
-    const { error } = this.props
-    if (error) {
-      return <Error />
-    }
-  }
-
   render () {
     const {
       handleMessage,
-      handleSigsRequired
-    } = this.props
+      handleSigsRequired } = this.props
     return (
       <div className='App-window'>
         <ContainerHeader titles={['Create Proposal']} />
@@ -93,8 +91,7 @@ class CreateProposal extends Component {
           <input onChange={handleSigsRequired}
             type='number' placeholder='Signatures Required' />
         </div>
-        <Signature process={'create'} />
-        {this.renderError()}
+        <Signature />
       </div>
     )
   }
@@ -105,10 +102,15 @@ function mapStateToProps (state) {
   const error = UI.error || null
   const whitelist = UI.whitelist || []
   const signers = UI.signers || []
+  const payload = UI.signature_payload || null
+  const hash = UI.hash_create || null
+
   return {
     error,
     whitelist,
-    signers
+    signers,
+    payload,
+    hash
   }
 }
 
@@ -153,6 +155,8 @@ function mapDispatchToProps (dispatch, ownProps) {
       dispatch(clearSig)
       const clearHash = clearSection('hash_create')
       dispatch(clearHash)
+      const clearGreeting = clearSection('post_sig_step')
+      dispatch(clearGreeting)
     }
   }
 }
