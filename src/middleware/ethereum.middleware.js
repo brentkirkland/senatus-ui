@@ -92,3 +92,21 @@ export function metamaskSign (payload = {}) {
     })
   }
 }
+
+// ledgerSign () {
+//   // ledger.comm_node.create_async().then(function (comm) {
+//   //   // eslint-disable-next-line new-cap
+//   //   const eth = new ledger.eth(comm)
+//   //   console.log('eth', eth)
+//   //   eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
+//   //   .then(function (result) {
+//   //     var v = result['v'] - 27
+//   //     v = v.toString(16)
+//   //     if (v.length < 2) {
+//   //       v = '0' + v
+//   //     }
+//   //     console.log('Signature 0x' + result['r'] + result['s'] + v)
+//   //   })
+//   //   .catch(function (ex) { console.log(ex) })
+//   // })
+// }

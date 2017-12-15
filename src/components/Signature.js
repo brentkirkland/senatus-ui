@@ -21,21 +21,6 @@ class Signature extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  componentDidMount () {
-    this.initWeb3()
-  }
-
-  initWeb3 () {
-    let web3
-    if (typeof window.web3 !== 'undefined') {
-      web3 = new Web3(window.web3.currentProvider)
-    } else {
-      // set the provider you want from Web3.providers
-      web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-    }
-    this.setState({web3: web3})
-  }
-
   handleSubmit () {
     const {
       message,
@@ -81,24 +66,6 @@ class Signature extends Component {
       }
       handleWeb3(data)
     }
-  }
-
-  ledgerSign () {
-    // ledger.comm_node.create_async().then(function (comm) {
-    //   // eslint-disable-next-line new-cap
-    //   const eth = new ledger.eth(comm)
-    //   console.log('eth', eth)
-    //   eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
-    //   .then(function (result) {
-    //     var v = result['v'] - 27
-    //     v = v.toString(16)
-    //     if (v.length < 2) {
-    //       v = '0' + v
-    //     }
-    //     console.log('Signature 0x' + result['r'] + result['s'] + v)
-    //   })
-    //   .catch(function (ex) { console.log(ex) })
-    // })
   }
 
   handleRadio (e) {
