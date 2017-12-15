@@ -1,26 +1,26 @@
-const errorAction = (error = 'Something went wrong.') => {
+const setUI = (section, value) => {
   const payload = {
     type: 'UI_SET',
     payload: {
-      section: 'error',
-      value: error
+      section,
+      value
     }
   }
   return payload
 }
 
+const errorAction = (error = 'Something went wrong.') => {
+  const payload = setUI('error', error)
+  return payload
+}
+
 const clearSection = (section) => {
-  const payload = {
-    type: 'UI_SET',
-    payload: {
-      section,
-      value: null
-    }
-  }
+  const payload = setUI(section, null)
   return payload
 }
 
 export default {
   errorAction,
-  clearSection
+  clearSection,
+  setUI
 }

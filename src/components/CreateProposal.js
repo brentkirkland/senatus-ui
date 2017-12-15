@@ -115,7 +115,9 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch, ownProps) {
   const { UI = {} } = actions
   const {
-    errorAction
+    errorAction,
+    setUI,
+    clearSection
   } = UI
 
   return {
@@ -129,63 +131,27 @@ function mapDispatchToProps (dispatch, ownProps) {
     },
     handleMessage: (e) => {
       const { value } = e.target
-      const messageCreate = {
-        type: 'UI_SET',
-        payload: {
-          section: 'message',
-          value
-        }
-      }
-      dispatch(messageCreate)
+      const action = setUI('message', value)
+      dispatch(action)
     },
     handleSigners: (value) => {
-      const sigsCreate = {
-        type: 'UI_SET',
-        payload: {
-          section: 'signers',
-          value
-        }
-      }
-      dispatch(sigsCreate)
+      const action = setUI('signers', value)
+      dispatch(action)
     },
     handleSigsRequired: (e) => {
       const { value } = e.target
       const hardValue = parseInt(value, 10)
-      const sigsRequiredCreate = {
-        type: 'UI_SET',
-        payload: {
-          section: 'sigsRequired',
-          value: hardValue
-        }
-      }
-      dispatch(sigsRequiredCreate)
+      const action = setUI('sigsRequired', hardValue)
+      dispatch(action)
     },
     setPage: (value) => {
-      const pageData = {
-        type: 'UI_SET',
-        payload: {
-          section: 'page',
-          value
-        }
-      }
-      dispatch(pageData)
+      const action = setUI('page', value)
+      dispatch(action)
     },
     clearPreviousData: () => {
-      const clearPayload = {
-        type: 'UI_SET',
-        payload: {
-          section: 'signature_payload',
-          value: null
-        }
-      }
-      dispatch(clearPayload)
-      const clearHash = {
-        type: 'UI_SET',
-        payload: {
-          section: 'hash_create',
-          value: null
-        }
-      }
+      const clearSig = clearSection('signature_payload')
+      dispatch(clearSig)
+      const clearHash = clearSection('hash_create')
       dispatch(clearHash)
     }
   }
