@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import Web3 from 'web3'
-// import ledger from 'ledgerco'
 import actions from '../actions'
 import { postSig } from '../middleware/grenache.middleware'
 import { metamaskSign } from '../middleware/ethereum.middleware'
@@ -55,7 +53,6 @@ class Signature extends Component {
     } else if (button === 'ledger') {
       // this.ledgerSign()
     } else {
-      // this.web3Sign()
       const data = {
         msg: message,
         signers,

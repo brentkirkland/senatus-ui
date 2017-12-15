@@ -2,6 +2,7 @@ import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 
+// import ledger from 'ledgerco'
 import actions from '../actions'
 import { postSig } from './grenache.middleware'
 
@@ -54,7 +55,7 @@ export function metamaskSign (payload = {}) {
             const error = errorAction(err)
             dispatch(error)
           } else if (result.error) {
-            const error = errorAction(result.error)
+            const error = errorAction(result.error.message)
             dispatch(error)
           } else {
             const recovered = sigUtil.recoverPersonalSignature({
