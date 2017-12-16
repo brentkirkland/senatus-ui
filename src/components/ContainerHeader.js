@@ -21,33 +21,12 @@ class ContainerHeader extends Component {
     return objects
   }
 
-  renderHeader () {
-    const { error, success } = this.props
-    if (error) {
-      return (
-        <div className='window-header-error'>
-          <div
-            key={`header_error`}
-            className={'window-header-selected'}>Error</div>
-        </div>
-      )
-    }
-    if (success) {
-      return (
-        <div className='window-header-success'>
-          {this.renderHeaderTabs()}
-        </div>
-      )
-    }
+  render () {
     return (
       <div className='window-header'>
         {this.renderHeaderTabs()}
       </div>
     )
-  }
-
-  render () {
-    return this.renderHeader()
   }
 }
 
