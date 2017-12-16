@@ -1,6 +1,6 @@
 {
   "name": "senatus-ui",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
     "eth-sig-util": "^1.4.0",
