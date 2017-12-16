@@ -11,6 +11,7 @@ class Search extends Component {
     }
 
     this.handleSearchText = this.handleSearchText.bind(this)
+    this.handleEnter = this.handleEnter.bind(this)
     this.pushTo = this.pushTo.bind(this)
   }
 
@@ -19,6 +20,13 @@ class Search extends Component {
     this.setState({
       hash: value
     })
+  }
+
+  handleEnter (e) {
+    const { key } = e
+    if (key === 'Enter') {
+      this.pushTo()
+    }
   }
 
   pushTo () {
@@ -32,6 +40,7 @@ class Search extends Component {
     return (
       <div className='App-search'>
         <input className='App-search-input'
+          onKeyPress={this.handleEnter}
           onChange={this.handleSearchText}
           value={hash}
           placeholder='Enter a hash' />

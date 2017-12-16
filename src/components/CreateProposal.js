@@ -9,10 +9,7 @@ import './App.css'
 
 class CreateProposal extends Component {
   componentWillMount () {
-    // not sure how much this will be used...
-    // but it's going to hang out for a little
-    const { setPage, clearPreviousData, createError } = this.props
-    setPage('create')
+    const { clearPreviousData, createError } = this.props
     clearPreviousData()
     createError(null)
   }
@@ -147,10 +144,6 @@ function mapDispatchToProps (dispatch, ownProps) {
       const { value } = e.target
       const hardValue = parseInt(value, 10)
       const action = setUI('sigsRequired', hardValue)
-      dispatch(action)
-    },
-    setPage: (value) => {
-      const action = setUI('page', value)
       dispatch(action)
     },
     clearPreviousData: () => {
