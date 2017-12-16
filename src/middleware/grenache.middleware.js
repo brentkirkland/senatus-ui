@@ -1,10 +1,11 @@
 import Grenache from 'grenache-nodejs-http'
 import Link from 'grenache-browser-http'
 import actions from '../actions'
+import { grenacheConfig } from '../var/config'
 
 const Peer = Grenache.PeerRPCClient
 const link = new Link({
-  grape: 'http://127.0.0.1:30001'
+  grape: grenacheConfig.grapeUrl
 })
 link.start()
 const peer = new Peer(link, {})

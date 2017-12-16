@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
+import { appConfig } from '../var/config'
 import Greeting from './Greeting'
 import CreateProposal from './CreateProposal'
 import SignProposal from './SignProposal'
@@ -15,7 +16,7 @@ class App extends Component {
           <header className='App-header'>
             <div className='App-header-container'>
               <Link className='App-title-link' to='/'>
-                <h1 className='App-title'>Senatus</h1>
+                <h1 className='App-title'>{appConfig.name}</h1>
               </Link>
               <Route component={Search} />
             </div>

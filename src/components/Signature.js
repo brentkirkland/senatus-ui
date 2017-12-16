@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import actions from '../actions'
-import { postSig } from '../middleware/grenache.middleware'
 import { metamaskSign } from '../middleware/ethereum.middleware'
+import { signatureConfig } from '../var/config'
 import ContainerHeader from './ContainerHeader'
 import './App.css'
 
@@ -44,7 +44,7 @@ class Signature extends Component {
     if (!button) {
       error += 'Needs a signing process. '
     }
-    if ((sigsRequired / signers.length) <= 0.5) {
+    if ((sigsRequired / signers.length) <= signatureConfig.signMajority) {
       error += 'A majority will not be reached with such quorum.'
     }
     if (error.length > 0) {
@@ -140,9 +140,6 @@ function mapDispatchToProps (dispatch) {
     createError: (error = 'Something went wrong.') => {
       const errorOut = errorAction(error)
       dispatch(errorOut)
-    },
-    postSignature: (args) => {
-      dispatch(postSig(args))
     },
     handleWeb3: (payload) => dispatch(metamaskSign(payload))
   }

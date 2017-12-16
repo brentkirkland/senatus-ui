@@ -4,6 +4,7 @@ import ethUtil from 'ethereumjs-util'
 
 // import ledger from 'ledgerco'
 import actions from '../actions'
+import { web3Config } from '../var/config'
 import { postSig } from './grenache.middleware'
 
 const { UI = {} } = actions
@@ -14,7 +15,7 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(window.web3.currentProvider)
 } else {
   // set the provider you want from Web3.providers
-  web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+  web3 = new Web3(new Web3.providers.HttpProvider(web3Config.providerUrl))
 }
 
 export function metamaskSign (payload = {}) {
