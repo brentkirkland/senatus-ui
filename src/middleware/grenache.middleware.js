@@ -17,11 +17,11 @@ const {
   setUI
 } = UI
 
-function handleGrenacheError () {
-  const error = 'Problem getting whitelist. Make sure your grapes and worker are running.'
-  const action = errorAction(error)
-  return action
-}
+// function handleGrenacheError () {
+//   const error = 'Problem getting whitelist. Make sure your grapes and worker are running.'
+//   const action = errorAction(error)
+//   return action
+// }
 
 function clearError () {
   const section = 'error'
@@ -37,7 +37,9 @@ export function getWhitelist () {
     }
     peer.request('rest:senatus:vanilla', fxQuery, { timeout: 100000 }, (err, data) => {
       if (err) {
-        dispatch(handleGrenacheError())
+        // dispatch(handleGrenacheError())
+        const errorOut = errorAction(err.message)
+        dispatch(errorOut)
       } else {
         const whitelistUsernameMap = new Map()
         const whitelistPubkeyMap = new Map()
@@ -66,7 +68,9 @@ export function getProposal (proposalHash) {
     }
     peer.request('rest:senatus:vanilla', getPayloadQuery, { timeout: 100000 }, (err, data) => {
       if (err) {
-        dispatch(handleGrenacheError())
+        // dispatch(handleGrenacheError())
+        const errorOut = errorAction(err.message)
+        dispatch(errorOut)
       } else {
         let msg = null
         let signers = null
@@ -132,10 +136,10 @@ export function postSig (args) {
       args
     }
     peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, data) => {
+      console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhhhha', data, err)
       if (err) {
-        const errorStr = 'Problem submitting signature. Make sure your grapes and worker are running.'
-        const errorOut = errorAction(errorStr)
-        return errorOut
+        const errorOut = errorAction(err.message)
+        dispatch(errorOut)
       } else {
         const sigAction = setUI('signature_payload', args)
         dispatch(sigAction)
