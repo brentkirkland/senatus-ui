@@ -1,6 +1,6 @@
 # senatus-ui
 
-**senatus-ui** allows a group of users to reach concensus of a message, ethereum contract, or bitcoin wallet. Senatus depends on [Senatus](https://github.com/bitfinexcom/senatus), [Grenache](https://github.com/bitfinexcom/grenache), and [Wasteland](https://github.com/bitfinexcom/senatus).
+**senatus-ui** allows a group of users to reach consensus for a message, Ethereum contract, or Bitcoin wallet. Senatus-ui depends on [Senatus](https://github.com/bitfinexcom/senatus), [Grenache](https://github.com/bitfinexcom/grenache), and [Wasteland](https://github.com/bitfinexcom/senatus).
 
 ## Install:
 
@@ -14,7 +14,7 @@ git clone https://github.com/bitfinexcom/senatus-ui
 
 ## Config:
 
-Senatus is designed to be extended to anyone's needs. You will find a config file under `src/var/` where you can edit project parameters.
+Senatus-ui is designed to be extended to anyone's needs. You will find a config file under `src/var/` where you can edit project parameters.
 
 ## Run:
 
