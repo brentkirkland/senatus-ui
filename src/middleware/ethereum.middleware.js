@@ -18,6 +18,22 @@ if (typeof window.web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider(web3Config.providerUrl))
 }
 
+function handleResult (recovered, from, args, whitelistMap) {
+  return (dispatch) => {
+    if (recovered.toUpperCase() === from.toUpperCase()) {
+      if (whitelistMap.has(from)) {
+        dispatch(postSig(args))
+      } else {
+        const error = errorAction('Address is not whitelisted')
+        dispatch(error)
+      }
+    } else {
+      const error = errorAction('Failed to verify signer')
+      dispatch(error)
+    }
+  }
+}
+
 export function metamaskSign (payload = {}) {
   return (dispatch) => {
     const {
@@ -63,31 +79,21 @@ export function metamaskSign (payload = {}) {
               data: hexMsg,
               sig: result.result
             })
-            if (recovered.toUpperCase() === from.toUpperCase()) {
-              if (whitelistMap.has(from)) {
-                const username = whitelistMap.get(from).username
-                const args = [
-                  {
-                    msg,
-                    signers,
-                    sigsRequired,
-                    uuid,
-                    sigs
-                  },
-                  {
-                    signer: username,
-                    signedMsg: result.result
-                  }
-                ]
-                dispatch(postSig(args))
-              } else {
-                const error = errorAction('Address is not whitelisted')
-                dispatch(error)
+            const username = whitelistMap.get(from).username
+            const args = [
+              {
+                msg,
+                signers,
+                sigsRequired,
+                uuid,
+                sigs
+              },
+              {
+                signer: username,
+                signedMsg: result.result
               }
-            } else {
-              const error = errorAction('Failed to verify signer, got: ' + result)
-              dispatch(error)
-            }
+            ]
+            dispatch(handleResult(recovered, from, args, whitelistMap))
           }
         })
       }
@@ -132,31 +138,22 @@ export function ledgerSign (payload = {}) {
             data: hexMsgRec,
             sig: hexStr
           })
-          if (recovered.toUpperCase() === address.address.toUpperCase()) {
-            if (whitelistMap.has(address.address)) {
-              const username = whitelistMap.get(address.address).username
-              const args = [
-                {
-                  msg,
-                  signers,
-                  sigsRequired,
-                  uuid,
-                  sigs
-                },
-                {
-                  signer: username,
-                  signedMsg: hexStr
-                }
-              ]
-              dispatch(postSig(args))
-            } else {
-              const error = errorAction('Address is not whitelisted')
-              dispatch(error)
+          const from = address.address
+          const username = whitelistMap.get(from).username
+          const args = [
+            {
+              msg,
+              signers,
+              sigsRequired,
+              uuid,
+              sigs
+            },
+            {
+              signer: username,
+              signedMsg: hexStr
             }
-          } else {
-            const error = errorAction('Failed to verify signer, got: ' + result)
-            dispatch(error)
-          }
+          ]
+          dispatch(handleResult(recovered, from, args, whitelistMap))
         })
         .catch((err) => {
           const error = errorAction(err.message)
@@ -169,7 +166,6 @@ export function ledgerSign (payload = {}) {
       })
     })
     .catch((err) => {
-      console.log('hello')
       const error = errorAction(err.message)
       dispatch(error)
     })
