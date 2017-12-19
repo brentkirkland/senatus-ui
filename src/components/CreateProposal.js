@@ -31,13 +31,13 @@ class CreateProposal extends Component {
     const { signers, handleSigners } = this.props
     const index = signers.indexOf(value)
     // keep these here. sometimes this is a race condition. trying to debug
-    console.log('signers before', signers)
+    // console.log('signers before', signers)
     if (index > -1) {
       signers.splice(index, 1)
     } else {
       signers.push(value)
     }
-    console.log('signers!!!', signers)
+    // console.log('signers!!!', signers)
     handleSigners(signers)
   }
 
