@@ -5,8 +5,8 @@
   "dependencies": {
     "eth-sig-util": "^1.4.0",
     "ethereumjs-util": "^5.1.2",
+    "grenache-browser-http": "https://github.com/brentkirkland/grenache-browser-http",
     "grenache-nodejs-http": "^0.7.1",
-    "grenache-nodejs-link": "^0.7.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",

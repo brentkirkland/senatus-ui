@@ -99,7 +99,7 @@ class Signature extends Component {
       <div>
         <ContainerHeader titles={['Sign to Confirm']} />
         <div className='App-container'>
-          <label>Signing Process (Only metamask works!)</label>
+          <label>Signing Process</label>
           {this.renderRadios()}
           <input
             onClick={this.handleSubmit}
