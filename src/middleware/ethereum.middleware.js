@@ -3,7 +3,7 @@ import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 
 import actions from '../actions'
-import { web3Config } from '../var/config'
+import { web3Config, ledgerConfig } from '../var/config'
 import { postSig } from './grenache.middleware'
 
 const ledger = window.ledger
@@ -115,12 +115,12 @@ export function ledgerSign (payload = {}) {
     ledger.comm_u2f.create_async(1000000).then(function (comm) {
       // eslint-disable-next-line new-cap
       const eth = new ledger.eth(comm)
-      eth.getAddress_async("44'/60'/0'/0'/0")
+      eth.getAddress_async(ledgerConfig)
       .then((address) => {
         console.log(`Found address ${address.address}`)
         const hexMsg = Buffer.from(JSON.stringify(data)).toString('hex')
         const hexMsgRec = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
-        eth.signPersonalMessage_async("44'/60'/0'/0'/0", hexMsg)
+        eth.signPersonalMessage_async(ledgerConfig, hexMsg)
         .then((result) => {
           var v = result['v'] - 27
           v = v.toString(16)

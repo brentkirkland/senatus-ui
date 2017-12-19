@@ -14,15 +14,19 @@ export const grenacheConfig = {
 // minSignersAllowed: required checkmarks from whitelist
 // signatureMajorityPercent: how many signatures to reach majority
 export const signatureConfig = {
-  signingProcesses: [
-    'metamask',
-    'ledger'
-  ],
-  minSigners: 0,
+  // signingProcesses: [
+  //   'metamask',
+  //   'ledger'
+  // ],
+  // minSigners: 0,
   signMajority: 0.5
 }
 
 // providerUrl if you are running your own chain
 export const web3Config = {
   providerUrl: 'http://localhost:8545'
+}
+
+export const ledgerConfig = {
+  hdPath: "44'/60'/0'/0'/0"
 }
