@@ -18,12 +18,6 @@ const {
   setUI
 } = UI
 
-// function handleGrenacheError () {
-//   const error = 'Problem getting whitelist. Make sure your grapes and worker are running.'
-//   const action = errorAction(error)
-//   return action
-// }
-
 function clearError () {
   const section = 'error'
   const action = clearSection(section)
@@ -137,7 +131,6 @@ export function postSig (args) {
       args
     }
     peer.request('rest:senatus:vanilla', addSigQuery, { timeout: 10000 }, (err, data) => {
-      console.log('HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHhhhha', data, err)
       if (err) {
         const errorOut = errorAction(err.message)
         dispatch(errorOut)

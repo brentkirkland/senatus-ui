@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import actions from '../actions'
-import { metamaskSign } from '../middleware/ethereum.middleware'
+import { metamaskSign, ledgerSign } from '../middleware/ethereum.middleware'
 import { signatureConfig } from '../var/config'
 import ContainerHeader from './ContainerHeader'
 import './App.css'
@@ -27,8 +27,17 @@ class Signature extends Component {
       sigs,
       whitelistPubkeyMap,
       createError,
-      handleWeb3
+      handleWeb3,
+      handleLedger
     } = this.props
+    const data = {
+      msg: message,
+      signers,
+      sigsRequired,
+      uuid,
+      sigs,
+      whitelistMap: whitelistPubkeyMap
+    }
     // TODO: move button to redux
     const { button } = this.state
     let error = ''
@@ -50,16 +59,8 @@ class Signature extends Component {
     if (error.length > 0) {
       createError(error)
     } else if (button === 'ledger') {
-      // this.ledgerSign()
+      handleLedger(data)
     } else {
-      const data = {
-        msg: message,
-        signers,
-        sigsRequired,
-        uuid,
-        sigs,
-        whitelistMap: whitelistPubkeyMap
-      }
       handleWeb3(data)
     }
   }
@@ -141,7 +142,8 @@ function mapDispatchToProps (dispatch) {
       const errorOut = errorAction(error)
       dispatch(errorOut)
     },
-    handleWeb3: (payload) => dispatch(metamaskSign(payload))
+    handleWeb3: (payload) => dispatch(metamaskSign(payload)),
+    handleLedger: (payload) => dispatch(ledgerSign(payload))
   }
 }
 

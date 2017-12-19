@@ -2,11 +2,11 @@ import Web3 from 'web3'
 import sigUtil from 'eth-sig-util'
 import ethUtil from 'ethereumjs-util'
 
-// import ledger from 'ledgerco'
 import actions from '../actions'
 import { web3Config } from '../var/config'
 import { postSig } from './grenache.middleware'
 
+const ledger = window.ledger
 const { UI = {} } = actions
 const { errorAction } = UI
 
@@ -95,20 +95,82 @@ export function metamaskSign (payload = {}) {
   }
 }
 
-// ledgerSign () {
-//   // ledger.comm_node.create_async().then(function (comm) {
-//   //   // eslint-disable-next-line new-cap
-//   //   const eth = new ledger.eth(comm)
-//   //   console.log('eth', eth)
-//   //   eth.signPersonalMessage_async("44'/60'/0'/0'/0", Buffer.from('test').toString('hex'))
-//   //   .then(function (result) {
-//   //     var v = result['v'] - 27
-//   //     v = v.toString(16)
-//   //     if (v.length < 2) {
-//   //       v = '0' + v
-//   //     }
-//   //     console.log('Signature 0x' + result['r'] + result['s'] + v)
-//   //   })
-//   //   .catch(function (ex) { console.log(ex) })
-//   // })
-// }
+export function ledgerSign (payload = {}) {
+  return (dispatch) => {
+    const {
+      msg,
+      signers,
+      sigsRequired,
+      uuid,
+      sigs,
+      whitelistMap
+    } = payload
+    const data = {
+      msg,
+      signers,
+      sigsRequired,
+      uuid,
+      sigs
+    }
+    ledger.comm_u2f.create_async(1000000).then(function (comm) {
+      // eslint-disable-next-line new-cap
+      const eth = new ledger.eth(comm)
+      eth.getAddress_async("44'/60'/0'/0'/0")
+      .then((address) => {
+        console.log(`Found address ${address.address}`)
+        const hexMsg = Buffer.from(JSON.stringify(data)).toString('hex')
+        const hexMsgRec = ethUtil.bufferToHex(Buffer.from(JSON.stringify(data), 'utf8'))
+        eth.signPersonalMessage_async("44'/60'/0'/0'/0", hexMsg)
+        .then((result) => {
+          var v = result['v'] - 27
+          v = v.toString(16)
+          if (v.length < 2) {
+            v = '0' + v
+          }
+          const hexStr = '0x' + result['r'] + result['s'] + v
+          const recovered = sigUtil.recoverPersonalSignature({
+            data: hexMsgRec,
+            sig: hexStr
+          })
+          if (recovered.toUpperCase() === address.address.toUpperCase()) {
+            if (whitelistMap.has(address.address)) {
+              const username = whitelistMap.get(address.address).username
+              const args = [
+                {
+                  msg,
+                  signers,
+                  sigsRequired,
+                  uuid,
+                  sigs
+                },
+                {
+                  signer: username,
+                  signedMsg: hexStr
+                }
+              ]
+              dispatch(postSig(args))
+            } else {
+              const error = errorAction('Address is not whitelisted')
+              dispatch(error)
+            }
+          } else {
+            const error = errorAction('Failed to verify signer, got: ' + result)
+            dispatch(error)
+          }
+        })
+        .catch((err) => {
+          const error = errorAction(err)
+          dispatch(error)
+        })
+      })
+      .catch((err) => {
+        const error = errorAction(err)
+        dispatch(error)
+      })
+    })
+    .catch((err) => {
+      const error = errorAction(err)
+      dispatch(error)
+    })
+  }
+}
